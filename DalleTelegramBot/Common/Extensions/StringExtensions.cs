@@ -1,0 +1,16 @@
+﻿namespace DalleTelegramBot.Common.Extensions;
+
+internal static class StringExtensions
+{
+    public static string GetCommand(this string input)
+        => input.Replace(" ", "-").ToLower();
+
+    public static string GetQuery(this string input)
+        => input.Split(' ')[0].ToLower();
+
+    public static bool GetCommand(this string input, string destination)
+        => input.Replace(" ", "-").ToLower().Equals(destination);
+
+    public static string[] GetArgs(this string input)
+        => input.Split(' ').Skip(1).ToArray();
+}

@@ -1,0 +1,48 @@
+﻿using DalleTelegramBot.Commands.Base;
+using DalleTelegramBot.Common.Attributes;
+using DalleTelegramBot.Common.IDependency;
+using DalleTelegramBot.Common.Utilities;
+using DalleTelegramBot.Data.Contracts;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types;
+using DalleTelegramBot.Common.Extensions;
+using DalleTelegramBot.Services.Telegram;
+
+namespace DalleTelegramBot.Commands.Admin.Account
+{
+    [Command("search-user", adminRequired: true)]
+    internal class GetUserCommand : BaseCommand, IScopedDependency
+    {
+        private readonly IUserRepository _userRepository;
+        public GetUserCommand(ITelegramService telegramService, IUserRepository userRepository) : base(telegramService)
+        {
+            _userRepository = userRepository;
+        }
+
+        public override async Task ExecuteAsync(Message message, CancellationToken cancellationToken)
+        {
+            long userId = message.UserId();
+
+            if (!long.TryParse(message.Text, out long userIdInput))
+            {
+                await _telegramService.SendMessageAsync(userId, TextConstant.GetUserCommandNotValidUserId, cancellationToken);
+            }
+            else
+            {
+                var user = await _userRepository.GetByIdAsync(userIdInput);
+
+                if (user is null)
+                {
+                    await _telegramService.SendMessageAsync(userId, string.Format(TextConstant.GetUserCommandNotFoundUserIdFormat, userIdInput), cancellationToken);
+                }
+                else
+                {
+
+                    await _telegramService.SendMessageAsync(userId,
+                        TextConstant.UserInfo(user.Id, user.IsBan, user.CreateTime),
+                        InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton: false), ParseMode.MarkdownV2, cancellationToken);
+                }
+            }
+        }
+    }
+}
