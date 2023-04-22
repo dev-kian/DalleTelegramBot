@@ -156,28 +156,36 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
 
         private async Task BotOnCallbackQueryReceived(CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
+            // If the callback query message or data text is null, return without doing anything.
             if (callbackQuery.Message is null || callbackQuery.Data is not { } dataText)
                 return;
 
+            // Extract the query name from the data text and invoke the corresponding query.
             var query = dataText.GetQuery();
-            _= InvokeCallbackQuery(query);
+            await InvokeCallbackQuery(query);
 
+            // Executes the specified query by name, if it exists.
             async Task InvokeCallbackQuery(string queryName)
             {
-                if(_queryCollection.TryGetQuery(queryName, out Type? queryType))
+                // Try to get the query type by name from the query collection.
+                if (_queryCollection.TryGetQuery(queryName, out Type? queryType))
                 {
+                    // If the query type is null, throw an exception.
                     if (queryType is null)
                         throw new NullReferenceException($"Query type for '{queryName}' is null.");
 
+                    // Create an async service scope to resolve dependencies for the query.
                     using var scope = _serviceProvider.CreateAsyncScope();
 
+                    // Get the query object from the service provider.
                     var query = scope.ServiceProvider.GetService(queryType) as IQuery;
 
-                    if(query is null)
+                    // If the query object is null, throw an exception.
+                    if (query is null)
                         throw new NullReferenceException($"Failed to get query for '{queryName}'.");
 
-
-            await query!.ExecuteAsync(callbackQuery, cancellationToken);
+                    // Execute the query asynchronously, passing in the callback query and cancellation token.
+                    await query!.ExecuteAsync(callbackQuery, cancellationToken);
                 }
             }
         }
