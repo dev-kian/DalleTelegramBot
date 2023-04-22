@@ -33,16 +33,16 @@ internal class CommunicateUserCommand : BaseCommand, IScopedDependency
                 if (await _userRepository.AnyAsync(inputUserId))
                 {
                     _cache.SetLastCommand(userId, "communicate-user", 2, data: inputUserId);
-                    await _telegramService.SendMessageAsync(userId, TextUtilitiy.CommunicateCommandSendMessage, cancellationToken);
+                    await _telegramService.SendMessageAsync(userId, TextUtility.CommunicateCommandSendMessage, cancellationToken);
                 }
                 else
                 {
-                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtilitiy.GetUserCommandNotFoundUserIdFormat, inputUserId), cancellationToken);
+                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.GetUserCommandNotFoundUserIdFormat, inputUserId), cancellationToken);
                 }
             }
             else
             {
-                await _telegramService.SendMessageAsync(userId, string.Format(TextUtilitiy.GetUserCommandNotValidUserId, inputUserId), cancellationToken);
+                await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.GetUserCommandNotValidUserId, inputUserId), cancellationToken);
             }
         }
         else if (_cache.CanGetLastCommand(userId, "communicate-user", 2))
@@ -53,7 +53,7 @@ internal class CommunicateUserCommand : BaseCommand, IScopedDependency
                 var messageResponse = await _telegramService.ForwardMessageAsync(fetchUserId, userId, message.MessageId, cancellationToken);
                 var userName = messageResponse?.Chat?.Username;
                 userName = string.IsNullOrEmpty(userName) ? "*Empty*" : $"@{userName}";
-                var messageToSend = string.Format(TextUtilitiy.CommunicateCommandMessageFormat, fetchUserId, userName).EscapeMarkdownV2();
+                var messageToSend = string.Format(TextUtility.CommunicateCommandMessageFormat, fetchUserId, userName).EscapeMarkdownV2();
                 await _telegramService.SendMessageAsync(userId, messageToSend, ParseMode.MarkdownV2, cancellationToken);
             }
             catch (Exception ex)

@@ -3,6 +3,7 @@ using DalleTelegramBot.Commands.Base;
 using DalleTelegramBot.Common;
 using DalleTelegramBot.Common.Attributes;
 using DalleTelegramBot.Common.Caching;
+using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Filters.Base;
 using DalleTelegramBot.Queries;
@@ -41,22 +42,14 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            try
+            var handler = update switch
             {
-                var handler = update switch
-                {
-                    { Message: { } message } => BotOnMessageReceived(message, cancellationToken),
-                    { CallbackQuery: { } callbackQuery } => BotOnCallbackQueryReceived(callbackQuery, cancellationToken),
-                    _ => throw new NotImplementedException()
-                };
+                { Message: { } message } => BotOnMessageReceived(message, cancellationToken),
+                { CallbackQuery: { } callbackQuery } => BotOnCallbackQueryReceived(callbackQuery, cancellationToken),
+                _ => throw new NotImplementedException()
+            };
 
-                await handler;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("exception", ex);
-            }
-
+            await handler;
         }
 
         private async Task BotOnMessageReceived(Message message, CancellationToken cancellationToken)
@@ -65,17 +58,17 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
             //if (message.Text is not { } messageText)
             //    return;
 
-            string command = (message.Text ?? "").GetCommand();
+            string command = message.Text!;
 
             _= InvokeCommand(command).ConfigureAwait(false);
             
             async Task InvokeCommand(string commandName)
             {
-                if (!string.IsNullOrEmpty(command) && _commandCollection.TryGetCommand(commandName, out var typeInfo))
+                if (!string.IsNullOrEmpty(command) && _commandCollection.TryGetCommand(commandName.GetCommand().RemoveIcons(), out var typeInfo))
                 {
                     var scope = _serviceProvider.CreateAsyncScope();
 
-                    if (typeInfo.AdminRequired)
+                    if (typeInfo.Role is Role.Admin)
                     {
                         if (_settings.AdminId == message.UserId())
                         {
@@ -102,7 +95,7 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
                     {
                         var scope = _serviceProvider.CreateAsyncScope();
 
-                        if (cInfo.AdminRequired)
+                        if (cInfo.Role is Role.Admin)
                         {
                             if (_settings.AdminId == message.UserId())
                             {

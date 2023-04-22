@@ -1,13 +1,15 @@
 ﻿using DalleTelegramBot.Commands.Base;
 using DalleTelegramBot.Common.Attributes;
+using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
 using DalleTelegramBot.Services.Telegram;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace DalleTelegramBot.Commands.User
 {
-    [Command("/feedback")]
+    [Command("/feedback", Role.User)]
     internal class FeedbackCommand : BaseCommand, ISingletonDependency
     {
         public FeedbackCommand(ITelegramService telegramService) : base(telegramService)
@@ -18,7 +20,11 @@ namespace DalleTelegramBot.Commands.User
         {
             long userId = message.UserId();
 
-            await _telegramService.SendMessageAsync(userId, "You can talk with @jkianj", cancellationToken);
+            await _telegramService.SendMessageAsync(userId,
+                $"Dear {message.From!.FirstName}, to contact the robot _support_, you can refer to the Telegram ID below\n@jkianj", ParseMode.Markdown, cancellationToken);
+
+            await _telegramService.SendMessageAsync(userId,
+                $"Dear {message.From!.FirstName}, to contact the robot _support_, you can refer to the Telegram ID below\n@jkianj", ParseMode.MarkdownV2, cancellationToken);
         }
     }
 }

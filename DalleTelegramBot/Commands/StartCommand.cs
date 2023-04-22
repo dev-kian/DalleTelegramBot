@@ -1,6 +1,7 @@
 ﻿using DalleTelegramBot.Commands.Base;
 using DalleTelegramBot.Common;
 using DalleTelegramBot.Common.Attributes;
+using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
 using DalleTelegramBot.Common.Utilities;
@@ -8,11 +9,10 @@ using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Services.Telegram;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace DalleTelegramBot.Commands
 {
-    [Command("/start")]
+    [Command("/start", Role.Optional)]
     [CheckBanUser]
     internal class StartCommand : BaseCommand, IScopedDependency
     {
@@ -34,12 +34,12 @@ namespace DalleTelegramBot.Commands
             }
             else if(await _userRepository.AnyAsync(userId))
             {
-                await _telegramService.SendMessageAsync(userId, TextUtilitiy.StartCommandExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.StartCommandExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
             }
             else
             {
                 await _userRepository.AddAsync(new() { Id = userId });
-                await _telegramService.SendMessageAsync(userId, TextUtilitiy.StartCommandNotExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.StartCommandNotExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
             }
         }
     }

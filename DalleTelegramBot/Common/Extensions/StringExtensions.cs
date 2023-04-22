@@ -1,4 +1,6 @@
-﻿namespace DalleTelegramBot.Common.Extensions;
+﻿using System.Text.RegularExpressions;
+
+namespace DalleTelegramBot.Common.Extensions;
 
 internal static class StringExtensions
 {
@@ -9,8 +11,11 @@ internal static class StringExtensions
         => input.Split(' ')[0].ToLower();
 
     public static bool GetCommand(this string input, string destination)
-        => input.Replace(" ", "-").ToLower().Equals(destination);
+        => input.Replace(" ", "-").ToLower().RemoveIcons().Equals(destination);
 
     public static string[] GetArgs(this string input)
         => input.Split(' ').Skip(1).ToArray();
+
+    public static string RemoveIcons(this string input)
+        => Regex.Replace(input, @"[^\x00-\x7F]+|[^a-zA-Z0-9 !@#$%^&*()+={}\[\]\\|;:'"",<>\.\?/-]+", "");
 }

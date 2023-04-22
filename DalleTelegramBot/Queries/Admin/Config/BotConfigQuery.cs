@@ -26,7 +26,7 @@ namespace DalleTelegramBot.Queries.Admin.Config
                 InlineUtility.KeyboardButton($"Get log report📑", "bot-config-get-log-report"),
                 InlineUtility.BackKeyboardButton("settings"),
             });
-            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, await TextUtilitiy.OSInfoText(), inlineKeyboard, cancellationToken);
+            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, await TextUtility.OSInfoText(), inlineKeyboard, cancellationToken);
         }
     }
 }

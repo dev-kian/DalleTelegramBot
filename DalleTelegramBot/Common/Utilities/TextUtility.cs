@@ -1,9 +1,5 @@
 ﻿using DalleTelegramBot.Common.SystemMetadata;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DalleTelegramBot.Common.Utilities
 {
@@ -28,21 +24,26 @@ namespace DalleTelegramBot.Common.Utilities
         public const string CommunicateCommandStartForwardingMessageFormat = "Start forwarding your message to *{0}* users";
         public const string CommunicateCommandSendMessage = "Send your message";
         public const string CommunicateCommandEndForwardMessageForamt  = "Your message has been successfully forwarded to *{0}* users\nFailed can't send: *{1}*";
-        public const string CommunicateCommand = "";
 
         public static string UserInfo(long userId, bool isBan, DateTime createTime)
         {
             var builder = new StringBuilder();
-            builder.AppendLine($"🔑*ID:* {userId}");
-            builder.AppendLine($"⚰️*Is Ban:* {(isBan ? "YES" : "NO")}");
-            builder.AppendLine($"🐣*Registration date:* {createTime:G}");
+            builder.AppendLine($"🔑_ID_: {userId}");
+            builder.AppendLine($"⚰️_Is Ban_: {(isBan ? "YES" : "NO")}");
+            builder.AppendLine($"🐣_Registration date_: {createTime:G}");
             return builder.ToString();
         }
 
-        public static string AccountInfo(int count, int maxCount)
+        public static string AccountInfo(string name, long userId, DateTime createTime, int count, int maxCount)
         {
             var builder = new StringBuilder();
-            builder.AppendLine($"⏳Count: `{count}/{maxCount}`");
+            builder.AppendLine($"☃️ *Profile*");
+            builder.AppendLine();
+            builder.AppendLine($"🗣_Name_: {name}");
+            builder.AppendLine($"🔑_ID_: {userId}");
+            builder.AppendLine($"🐣_Registration date_: {createTime:yyyy-MM-dd}");
+            builder.AppendLine();
+            builder.AppendLine($"⏳_Count_: `{count}/{maxCount}`");
             return builder.ToString();
         }
 

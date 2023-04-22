@@ -1,6 +1,7 @@
 ﻿using DalleTelegramBot.Commands.Base;
 using DalleTelegramBot.Common.Attributes;
 using DalleTelegramBot.Common.Caching;
+using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
 using DalleTelegramBot.Data.Contracts;
@@ -9,16 +10,17 @@ using DalleTelegramBot.Services.Telegram;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace DalleTelegramBot.Commands
+namespace DalleTelegramBot.Commands.User
 {
-    [Command("create-image")]
+    [Command("create-image", Role.User)]
+    [CheckBanUser]
     internal class ImageGenerationCommand : BaseCommand, IScopedDependency
     {
         private readonly IUserRepository _userRepository;
         private readonly IOpenAIClient _openAIClient;
         private readonly RateLimitingMemoryCache _rateLimitingCache;
         private readonly StateManagementMemoryCache _stateCache;
-        public ImageGenerationCommand(ITelegramService telegramService, IUserRepository userRepository,IOpenAIClient openAIClient, RateLimitingMemoryCache rateLimitingCache, StateManagementMemoryCache stateCache) : base(telegramService)
+        public ImageGenerationCommand(ITelegramService telegramService, IUserRepository userRepository, IOpenAIClient openAIClient, RateLimitingMemoryCache rateLimitingCache, StateManagementMemoryCache stateCache) : base(telegramService)
         {
             _userRepository = userRepository;
             _openAIClient = openAIClient;
@@ -50,7 +52,7 @@ namespace DalleTelegramBot.Commands
                 }
                 else
                 {
-                    if(await _openAIClient.ValidateApiKey(apiKey, cancellationToken))
+                    if (await _openAIClient.ValidateApiKey(apiKey, cancellationToken))
                     {
                         _stateCache.SetLastCommand(userId, "create-image", 2, data: "without-limit");
                         await _telegramService.SendMessageAsync(userId, "Send prompt to generate image", cancellationToken);
@@ -61,7 +63,7 @@ namespace DalleTelegramBot.Commands
                     }
                 }
             }
-            else if(_stateCache.CanGetLastCommand(userId, "create-image", 2, false))
+            else if (_stateCache.CanGetLastCommand(userId, "create-image", 2, false))
             {
                 var messageResponse = await _telegramService.SendMessageAsync(userId, "⏳Processing", cancellationToken);
 

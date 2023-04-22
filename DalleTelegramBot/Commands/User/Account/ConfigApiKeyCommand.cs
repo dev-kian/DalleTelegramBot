@@ -5,15 +5,14 @@ using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
 using DalleTelegramBot.Common.Utilities;
 using DalleTelegramBot.Data.Contracts;
-using DalleTelegramBot.Data.Models;
 using DalleTelegramBot.Services.Telegram;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace DalleTelegramBot.Commands.User.Account
 {
     [Command("config-api-key")]
+    [CheckBanUser]
     internal class ConfigApiKeyCommand : BaseCommand, IScopedDependency
     {
         private readonly IUserRepository _userRepository;
@@ -49,7 +48,7 @@ namespace DalleTelegramBot.Commands.User.Account
                 }
                 _=Task.WhenAll(tasks);
 
-                var messageText = string.Format(TextUtilitiy.ConfigApiKeyHasValueFormat, apiKey.MaskApiKey());
+                var messageText = string.Format(TextUtility.ConfigApiKeyHasValueFormat, apiKey.MaskApiKey());
 
                 await _telegramService.EditMessageAsync(userId, fetchMessageId, messageText,
                     InlineUtility.AccountSettingsApiKeyInlineKeyboard(true), ParseMode.Markdown, cancellationToken);

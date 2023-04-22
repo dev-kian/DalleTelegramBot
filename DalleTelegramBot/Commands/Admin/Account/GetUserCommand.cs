@@ -26,7 +26,7 @@ namespace DalleTelegramBot.Commands.Admin.Account
 
             if (!long.TryParse(message.Text, out long userIdInput))
             {
-                await _telegramService.SendMessageAsync(userId, TextUtilitiy.GetUserCommandNotValidUserId, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.GetUserCommandNotValidUserId, cancellationToken);
             }
             else
             {
@@ -34,13 +34,13 @@ namespace DalleTelegramBot.Commands.Admin.Account
 
                 if (user is null)
                 {
-                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtilitiy.GetUserCommandNotFoundUserIdFormat, userIdInput), cancellationToken);
+                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.GetUserCommandNotFoundUserIdFormat, userIdInput), cancellationToken);
                 }
                 else
                 {
 
                     await _telegramService.SendMessageAsync(userId,
-                        TextUtilitiy.UserInfo(user.Id, user.IsBan, user.CreateTime),
+                        TextUtility.UserInfo(user.Id, user.IsBan, user.CreateTime),
                         InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton: false), ParseMode.MarkdownV2, cancellationToken);
                 }
             }

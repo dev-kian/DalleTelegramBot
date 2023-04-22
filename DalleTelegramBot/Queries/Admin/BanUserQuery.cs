@@ -43,7 +43,7 @@ namespace DalleTelegramBot.Queries.Admin
             await _userRepository.UpdateBanStateAsync(userId, user.IsBan);
 
             await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId,
-                TextUtilitiy.UserInfo(user.Id, user.IsBan, user.CreateTime),
+                TextUtility.UserInfo(user.Id, user.IsBan, user.CreateTime),
                 InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton), ParseMode.MarkdownV2, cancellationToken);
         }
     }
