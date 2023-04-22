@@ -1,7 +1,6 @@
 ﻿using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Data.Models;
 using Dapper;
-using System;
 using System.Data.SQLite;
 
 namespace DalleTelegramBot.Data.Repositories
@@ -49,7 +48,7 @@ namespace DalleTelegramBot.Data.Repositories
             }
         }
 
-        public async Task<bool> AnyAsync(long id)//todo: write with dapper
+        public async Task<bool> AnyAsync(long id)
         {
 
             using (var connection = new SQLiteConnection(_connectionString))

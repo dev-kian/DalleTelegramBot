@@ -129,12 +129,27 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
             foreach (var attributeType in types)
             {
                 var filterType = attributeType.FilterType;
-                var filterService = scope.ServiceProvider.GetService(filterType) as IFilter;
-                if (!await filterService?.CheckAsync(message, cancellationToken))
+
+                var filter = scope.ServiceProvider.GetService(filterType) as IFilter;
+
+                if (filter is null)
                 {
-                    return false;
+                    throw new NullReferenceException($"Failed to get filter service for type '{filterType.FullName}'.");
+                }
+
+                try
+                {
+                    if (!await filter.CheckAsync(message, cancellationToken))
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while executing a filter of type '{filterType.FullName}'.", ex);
                 }
             }
+
             return true;
         }
 
@@ -152,12 +167,17 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
                 if(_queryCollection.TryGetQuery(queryName, out Type? queryType))
                 {
                     if (queryType is null)
-                        throw new NullReferenceException();//TODO: write text for error
+                        throw new NullReferenceException($"Query type for '{queryName}' is null.");
 
                     using var scope = _serviceProvider.CreateAsyncScope();
 
-                    var query = scope.ServiceProvider.GetRequiredService(queryType) as IQuery;
-                    await query!.ExecuteAsync(callbackQuery, cancellationToken);
+                    var query = scope.ServiceProvider.GetService(queryType) as IQuery;
+
+                    if(query is null)
+                        throw new NullReferenceException($"Failed to get query for '{queryName}'.");
+
+
+            await query!.ExecuteAsync(callbackQuery, cancellationToken);
                 }
             }
         }

@@ -1,13 +1,11 @@
 ﻿using DalleTelegramBot.Common.SystemMetadata;
 using System.Text;
+using System.Threading.Tasks.Dataflow;
 
 namespace DalleTelegramBot.Common.Utilities
 {
     internal class TextUtility
     {
-        public static string StartCommandExistsUser = @"👋🏻 Hello! {0} <br/><br/>I am a bot";
-        public const string StartCommandNotExistsUser = "New user\nRegister...";
-
         public static string StartInfo(long userId, string name, bool newUser)
         {
             var builder = new StringBuilder();
