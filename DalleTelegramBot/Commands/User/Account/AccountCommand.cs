@@ -31,7 +31,7 @@ namespace DalleTelegramBot.Commands.User.Account
 
             var user = await _userRepository.GetByIdAsync(userId);
             
-                await _telegramService.SendMessageAsync(userId, TextUtilitiy.AccountInfo(message.From!.FirstName, userId,
+                await _telegramService.SendMessageAsync(userId, TextUtility.AccountInfo(message.From!.FirstName, userId,
                     user.CreateTime, _cache.GetMessageCount(userId), BotConfig.LimitCount),
                 InlineUtility.AccountSettingsInlineKeyboard, ParseMode.Markdown, cancellationToken);
         }

@@ -32,6 +32,23 @@ namespace DalleTelegramBot.Services.Telegram
             return await _botClient.SendTextMessageAsync(id, text, parseMode: parseMode, cancellationToken: cancellationToken);
         }
 
+        public async Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, CancellationToken cancellationToken = default)
+        {
+            return await _botClient.SendTextMessageAsync(id, text, replyToMessageId: replyToMessageId, cancellationToken: cancellationToken);
+        }
+        public async Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, IReplyMarkup replyMarkup, CancellationToken cancellationToken = default)
+        {
+            return await _botClient.SendTextMessageAsync(id, text, replyMarkup: replyMarkup, replyToMessageId: replyToMessageId, cancellationToken: cancellationToken);
+        }
+        public async Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, IReplyMarkup replyMarkup, ParseMode parseMode, CancellationToken cancellationToken = default)
+        {
+            return await _botClient.SendTextMessageAsync(id, text, replyToMessageId: replyToMessageId, parseMode: parseMode, replyMarkup: replyMarkup, cancellationToken: cancellationToken);
+        }
+        public async Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, ParseMode parseMode, CancellationToken cancellationToken = default)
+        {
+            return await _botClient.SendTextMessageAsync(id, text, replyToMessageId: replyToMessageId, parseMode: parseMode, cancellationToken: cancellationToken);
+        }
+
 
         public async Task<Message> EditMessageAsync(ChatId id, int messageId, string text, CancellationToken cancellationToken = default)
         {

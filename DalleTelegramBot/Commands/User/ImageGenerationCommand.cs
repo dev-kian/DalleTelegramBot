@@ -65,7 +65,7 @@ namespace DalleTelegramBot.Commands.User
             }
             else if (_stateCache.CanGetLastCommand(userId, "create-image", 2, false))
             {
-                var messageResponse = await _telegramService.SendMessageAsync(userId, "⏳Processing", cancellationToken);
+                var messageResponse = await _telegramService.ReplyMessageAsync(userId, message.MessageId, "⏳Processing\n_please wait..._", ParseMode.Markdown, cancellationToken);
 
                 var imageResponse = await _openAIClient.GenerateImageAsync(new(message.Text, user.ImageCount, user.ImageSize), cancellationToken, apiKey: user.ApiKey);
 
@@ -80,7 +80,7 @@ namespace DalleTelegramBot.Commands.User
                     await _telegramService.SendMediaGroupAsync(userId, media, cancellationToken);
 
                     bool hasLimit = _stateCache.CanGetCommandData(userId, true)[0].Equals("with-limit");
-                    if (hasLimit)//bug if multi request can dor mizane ino
+                    if (hasLimit)//LOL
                     {
                         _rateLimitingCache.UpdateUserMessageCount(userId, imageResponse.Images.Data.Count);
                     }

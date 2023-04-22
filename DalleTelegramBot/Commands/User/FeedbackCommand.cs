@@ -4,6 +4,7 @@ using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
 using DalleTelegramBot.Services.Telegram;
+using System.Xml.Linq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -21,10 +22,7 @@ namespace DalleTelegramBot.Commands.User
             long userId = message.UserId();
 
             await _telegramService.SendMessageAsync(userId,
-                $"Dear {message.From!.FirstName}, to contact the robot _support_, you can refer to the Telegram ID below\n@jkianj", ParseMode.Markdown, cancellationToken);
-
-            await _telegramService.SendMessageAsync(userId,
-                $"Dear {message.From!.FirstName}, to contact the robot _support_, you can refer to the Telegram ID below\n@jkianj", ParseMode.MarkdownV2, cancellationToken);
+                $"Dear _{message.From!.FirstName}_, to contact the robot support, you can refer to the Telegram ID @jkianj", ParseMode.Markdown, cancellationToken);
         }
     }
 }

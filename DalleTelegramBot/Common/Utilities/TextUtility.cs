@@ -3,10 +3,25 @@ using System.Text;
 
 namespace DalleTelegramBot.Common.Utilities
 {
-    internal class TextUtilitiy
+    internal class TextUtility
     {
-        public const string StartCommandExistsUser = "Before register";
+        public static string StartCommandExistsUser = @"👋🏻 Hello! {0} <br/><br/>I am a bot";
         public const string StartCommandNotExistsUser = "New user\nRegister...";
+
+        public static string StartInfo(long userId, string name, bool newUser)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine($"👋🏻 {(newUser ? "Hello" : "Hello Again")}! <b><a href=\"tg://user?id={userId}\">{name}</a></b>");
+            builder.AppendLine("I am a Bot");
+            builder.AppendLine();
+            builder.AppendLine("<i>• Tip 1</i>");
+            builder.AppendLine();
+            builder.AppendLine("<i>• Tip 2</i>");
+            builder.AppendLine();
+            builder.AppendLine("<i>• Tip 3</i>");
+
+            return builder.ToString();
+        }
 
         public const string GetUserCommandNotValidUserId = "Your input is valid!\nEnter digits user id";
         public const string GetUserCommandNotFoundUserIdFormat = "Id {0} was not found!";

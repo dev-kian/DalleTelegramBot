@@ -11,6 +11,11 @@ namespace DalleTelegramBot.Services.Telegram
         Task<Message> SendMessageAsync(ChatId id, string text, IReplyMarkup replyMarkup, ParseMode parseMode, CancellationToken cancellationToken = default);
         Task<Message> SendMessageAsync(ChatId id, string text, ParseMode parseMode, CancellationToken cancellationToken = default);
 
+        Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, CancellationToken cancellationToken = default);
+        Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, IReplyMarkup replyMarkup, CancellationToken cancellationToken = default);
+        Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, IReplyMarkup replyMarkup, ParseMode parseMode, CancellationToken cancellationToken = default);
+        Task<Message> ReplyMessageAsync(ChatId id, int replyToMessageId, string text, ParseMode parseMode, CancellationToken cancellationToken = default);
+
         Task<Message> EditMessageAsync(ChatId id, int messageId, string text, CancellationToken cancellationToken = default);
         Task<Message> EditMessageAsync(ChatId id, int messageId, string text, InlineKeyboardMarkup replyMarkup, CancellationToken cancellationToken = default);
         Task<Message> EditMessageAsync(ChatId id, int messageId, string text, InlineKeyboardMarkup replyMarkup, ParseMode parseMode, CancellationToken cancellationToken = default);

@@ -9,6 +9,7 @@ using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Services.Telegram;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace DalleTelegramBot.Commands
 {
@@ -34,12 +35,12 @@ namespace DalleTelegramBot.Commands
             }
             else if(await _userRepository.AnyAsync(userId))
             {
-                await _telegramService.SendMessageAsync(userId, TextUtility.StartCommandExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.StartInfo(userId, message.From!.FirstName, newUser: false), InlineUtility.StartCommandReplyKeyboard, ParseMode.Html, cancellationToken);
             }
             else
             {
                 await _userRepository.AddAsync(new() { Id = userId });
-                await _telegramService.SendMessageAsync(userId, TextUtility.StartCommandNotExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.StartInfo(userId, message.From!.FirstName, newUser: true), InlineUtility.StartCommandReplyKeyboard, ParseMode.Html, cancellationToken);
             }
         }
     }
