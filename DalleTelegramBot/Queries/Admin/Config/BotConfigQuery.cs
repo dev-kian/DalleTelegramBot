@@ -20,15 +20,13 @@ namespace DalleTelegramBot.Queries.Admin.Config
         {
             var inlineKeyboard = new InlineKeyboardMarkup(new[]
             {
-                InlineUtility.KeyboardButton("Set default api key", "bot-config-default-api-key"),
-                InlineUtility.KeyboardButton("Limit image generation", "bot-config-rate-limit"),
-                InlineUtility.KeyboardButton($"Bot status", "bot-config-bot-status"),
-                InlineUtility.KeyboardButton($"Get log report", "bot-config-get-log-report"),
+                InlineUtility.KeyboardButton("Set default api key🗝", "bot-config-default-api-key"),
+                InlineUtility.KeyboardButton("Limit image generation👮‍♀️", "bot-config-rate-limit"),
+                InlineUtility.KeyboardButton($"Bot status📊", "bot-config-bot-status"),
+                InlineUtility.KeyboardButton($"Get log report📑", "bot-config-get-log-report"),
                 InlineUtility.BackKeyboardButton("settings"),
             });
-            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, await TextConstant.OSInfoText(), inlineKeyboard, cancellationToken);
-
-            //TODO: Really Important i think is not good idea to get OSInfoText from TextConstant! why? just see class Name Text*Constant* ok? Constant or dynamic text now??:/
+            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, await TextUtilitiy.OSInfoText(), inlineKeyboard, cancellationToken);
         }
     }
 }

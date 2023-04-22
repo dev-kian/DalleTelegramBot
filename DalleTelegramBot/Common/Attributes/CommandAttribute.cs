@@ -1,14 +1,16 @@
-﻿namespace DalleTelegramBot.Common.Attributes;
+﻿using DalleTelegramBot.Common.Enums;
+
+namespace DalleTelegramBot.Common.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 internal sealed class CommandAttribute : Attribute
 {
     public string Name { get; }
-    public bool AdminRequired { get; }
+    public Role Role { get; }
 
-    public CommandAttribute(string name, bool adminRequired = false)
+    public CommandAttribute(string name, Role role = Role.Optional)
     {
         Name = name;
-        AdminRequired = adminRequired;
+        Role = role;
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot.Types.ReplyMarkups;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Telegram.Bot.Types.ReplyMarkups;
 
 namespace DalleTelegramBot.Common.Utilities
 {
@@ -12,16 +6,16 @@ namespace DalleTelegramBot.Common.Utilities
     {
         public static InlineKeyboardMarkup AdminSettingsInlineKeyboard = new(new[]
         {
-            KeyboardButton("All Users", "all-users 0"),
-            KeyboardButton("All Users(Banned)", "all-users 0 x"),
-            KeyboardButton("Search User", "search-user"),
-            KeyboardButton("Communicate", "communicate"),
-            KeyboardButton("Bot Config", "bot-config"),
+            KeyboardButton("👥All Users", "all-users 0"),
+            KeyboardButton("👥All Users(Banned)", "all-users 0 x"),
+            KeyboardButton("🔎Search User", "search-user"),
+            KeyboardButton("🗣Communicate", "communicate"),
+            KeyboardButton("🔧Bot Config", "bot-config"),
         });
 
         public static InlineKeyboardMarkup AccountSettingsInlineKeyboard = new(new[]
         {
-                KeyboardButton("Config Api Key", "config-api-key"),
+                KeyboardButton("🗝Config Api Key", "config-api-key"),
                 KeyboardButton("Config Image Generation", "config-img-generation"),
         });
 
@@ -63,9 +57,9 @@ namespace DalleTelegramBot.Common.Utilities
         {
             List<IEnumerable<InlineKeyboardButton>> inlineKeyboardButtons = new();
             if (hasApiKey)
-                inlineKeyboardButtons.Add(KeyboardButton("Remove Api Key", "config-api-key remove"));
+                inlineKeyboardButtons.Add(KeyboardButton("Remove Api Key❌", "config-api-key remove"));
             else
-                inlineKeyboardButtons.Add(KeyboardButton("Set Api Key", "config-api-key set"));
+                inlineKeyboardButtons.Add(KeyboardButton("Set Api Key✅", "config-api-key set"));
             inlineKeyboardButtons.Add(BackKeyboardButton("account"));
 
             return new(inlineKeyboardButtons);
@@ -88,23 +82,19 @@ namespace DalleTelegramBot.Common.Utilities
             new[] { InlineKeyboardButton.WithCallbackData(text, callbackData) };
 
         public static IEnumerable<InlineKeyboardButton> BackKeyboardButton(string callback = "")
-            => new[] { InlineKeyboardButton.WithCallbackData("Back", $"back-{callback}") };
+            => new[] { InlineKeyboardButton.WithCallbackData("🔙Back", $"back-{callback}") };
 
 
 
         public static ReplyKeyboardMarkup StartCommandReplyKeyboard = new(new[]
         {
-            new KeyboardButton[] { "Create Image" },
-            new KeyboardButton[] { "Edit Image" },
-            new KeyboardButton[] { "Account" },
+            new KeyboardButton[] { "Create Image🖼" },
+            new KeyboardButton[] { "Edit Image🖼" },
+            new KeyboardButton[] { "Account⚙️" },
         })
         {
             ResizeKeyboard = true,
             OneTimeKeyboard = true
         };
-
-        //public static IEnumerable<InlineKeyboardButton> KeyboardButtona(string text) =>
-        //        new[] {  };
-
     }
 }

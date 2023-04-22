@@ -8,6 +8,6 @@
         public static bool BotIsOn() => status;
 
 
-        public static int LimitCount = 0;
+        public static int LimitCount = 5;
     }
 }

@@ -64,7 +64,8 @@ void ConfigureLogging()
     Log.Logger = new LoggerConfiguration()
         .MinimumLevel.Information()
         .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
-        .WriteTo.File(Path.Combine(Environment.CurrentDirectory, "logs", "log-.log"), LogEventLevel.Information, fileSizeLimitBytes: (1024 * 1024 * 1), rollingInterval: RollingInterval.Day)
+        .WriteTo.File(Path.Combine(Environment.CurrentDirectory, "logs", "log-.log"),
+            LogEventLevel.Information, fileSizeLimitBytes: (1024 * 1024 * 1), rollingInterval: RollingInterval.Day)
         .WriteTo.Console()
         .CreateLogger();
 }

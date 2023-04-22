@@ -34,12 +34,12 @@ namespace DalleTelegramBot.Commands
             }
             else if(await _userRepository.AnyAsync(userId))
             {
-                await _telegramService.SendMessageAsync(userId, TextConstant.StartCommandExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtilitiy.StartCommandExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
             }
             else
             {
                 await _userRepository.AddAsync(new() { Id = userId });
-                await _telegramService.SendMessageAsync(userId, TextConstant.StartCommandNotExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtilitiy.StartCommandNotExistsUser, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
             }
         }
     }

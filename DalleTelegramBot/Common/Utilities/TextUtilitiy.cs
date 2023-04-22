@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DalleTelegramBot.Common.Utilities
 {
-    internal class TextConstant
+    internal class TextUtilitiy
     {
         public const string StartCommandExistsUser = "Before register";
         public const string StartCommandNotExistsUser = "New user\nRegister...";
@@ -24,12 +24,18 @@ namespace DalleTelegramBot.Common.Utilities
         public const string ConfigApiKeyHasNotValue = "You don't set any secret key";
 
 
+        public const string CommunicateCommandMessageFormat = "Your message has been successfully forwarded to {0} ({1})";
+        public const string CommunicateCommandStartForwardingMessageFormat = "Start forwarding your message to *{0}* users";
+        public const string CommunicateCommandSendMessage = "Send your message";
+        public const string CommunicateCommandEndForwardMessageForamt  = "Your message has been successfully forwarded to *{0}* users\nFailed can't send: *{1}*";
+        public const string CommunicateCommand = "";
+
         public static string UserInfo(long userId, bool isBan, DateTime createTime)
         {
             var builder = new StringBuilder();
-            builder.AppendLine($"*Id:* {userId}");
-            builder.AppendLine($"*Is Ban:* {(isBan ? "YES" : "NO")}");
-            builder.AppendLine($"*Create Time:* {createTime:G}");
+            builder.AppendLine($"🔑*ID:* {userId}");
+            builder.AppendLine($"⚰️*Is Ban:* {(isBan ? "YES" : "NO")}");
+            builder.AppendLine($"🐣*Registration date:* {createTime:G}");
             return builder.ToString();
         }
 

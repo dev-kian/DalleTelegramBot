@@ -21,7 +21,7 @@ namespace DalleTelegramBot.Queries.Admin
         public override async Task ExecuteAsync(CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
             _cache.SetLastCommand(callbackQuery.UserId(), "search-user");
-            await _telegramService.SendMessageAsync(callbackQuery.UserId(), TextConstant.SearchUserCommandAsk, cancellationToken);
+            await _telegramService.SendMessageAsync(callbackQuery.UserId(), TextUtilitiy.SearchUserCommandAsk, cancellationToken);
         }
     }
 }

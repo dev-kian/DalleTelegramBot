@@ -40,7 +40,7 @@ namespace DalleTelegramBot.Queries.Admin.Communicate
                 InlineUtility.BackKeyboardButton("settings"),
             });
 
-            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, string.Format(TextConstant.CommunicateQueryMessageFormat,
+            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, string.Format(TextUtilitiy.CommunicateQueryMessageFormat,
                 usersCount, usersBannedCount, canSendCount), inlineKeyboard, ParseMode.Markdown, cancellationToken);
         }
     }

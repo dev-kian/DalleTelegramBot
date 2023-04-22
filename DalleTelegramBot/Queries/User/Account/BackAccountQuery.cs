@@ -22,7 +22,7 @@ internal class BackAccountQuery : BaseQuery, IScopedDependency
 
     public override async Task ExecuteAsync(CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
-        await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, TextConstant.AccountInfo(1, 20),
+        await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId, TextUtilitiy.AccountInfo(1, 20),
             InlineUtility.AccountSettingsInlineKeyboard, ParseMode.Markdown, cancellationToken);
     }
 }
@@ -62,7 +62,7 @@ internal class ConfigApiKeyQuery : BaseQuery, IScopedDependency
 
         bool hasApiKey = !string.IsNullOrEmpty(user.ApiKey);
 
-        var message = hasApiKey ? string.Format(TextConstant.ConfigApiKeyHasValueFormat, user.ApiKey.MaskApiKey()) : TextConstant.ConfigApiKeyHasNotValue;
+        var message = hasApiKey ? string.Format(TextUtilitiy.ConfigApiKeyHasValueFormat, user.ApiKey.MaskApiKey()) : TextUtilitiy.ConfigApiKeyHasNotValue;
 
         await _telegramService.EditMessageAsync(userId, callbackQuery.Message!.MessageId, message,
             InlineUtility.AccountSettingsApiKeyInlineKeyboard(hasApiKey), ParseMode.Markdown, cancellationToken);

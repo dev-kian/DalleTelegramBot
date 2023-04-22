@@ -1,5 +1,6 @@
 ﻿using DalleTelegramBot.Commands.Base;
 using DalleTelegramBot.Common.Attributes;
+using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.IDependency;
 using System.Collections.Concurrent;
 using System.Reflection;
@@ -22,7 +23,7 @@ internal sealed class CommandCollection : ISingletonDependency
         {
             var attribute = type.GetCustomAttribute<CommandAttribute>();
             if (attribute is null) continue;
-            _commands[attribute.Name] = new(type, attribute.AdminRequired);
+            _commands[attribute.Name] = new(type, attribute.Role);
         }
     }
 
@@ -36,18 +37,18 @@ internal sealed class CommandCollection : ISingletonDependency
         return _commands.ContainsKey(commandName);
     }
 
-    public bool AdminRequited(string commandName) =>
-        _commands[commandName].AdminRequired;
+    public Role GetRoleCommand(string commandName) =>
+        _commands[commandName].Role;
 }
 
 internal class TypeDetails
 {
     public Type TypeModel { get; }
-    public bool AdminRequired { get; }
+    public Role Role { get; }
 
-    public TypeDetails(Type type, bool adminRequired)
+    public TypeDetails(Type type, Role role)
     {
         TypeModel = type;
-        AdminRequired = adminRequired;
+        Role = role;
     }
 }

@@ -49,7 +49,7 @@ namespace DalleTelegramBot.Commands.User.Account
                 }
                 _=Task.WhenAll(tasks);
 
-                var messageText = string.Format(TextConstant.ConfigApiKeyHasValueFormat, apiKey.MaskApiKey());
+                var messageText = string.Format(TextUtilitiy.ConfigApiKeyHasValueFormat, apiKey.MaskApiKey());
 
                 await _telegramService.EditMessageAsync(userId, fetchMessageId, messageText,
                     InlineUtility.AccountSettingsApiKeyInlineKeyboard(true), ParseMode.Markdown, cancellationToken);
