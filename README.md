@@ -31,7 +31,10 @@ If you would like to test this project, you can try it out by using the <a href=
 To get started, simply send the /start command to the bot. This will display the main menu with options to create an image or access your account information.
 To create an image, select the "Create Image" option from the menu. The bot will then guide you through the process of entering your desired text and selecting image options.
 To configure image size and image count and configure API key, select the "Account" option from the menu. From there, you can change your image size and image count and own OpenAI API key settings.
-![](screens/screen06.png) | ![](screens/screen07.png)
+<div style="display: flex;">
+  <img src="screens/screen06.png">
+  <img src="screens/screen07.png">
+</div>
 
 ## Admin Panel
 To access the admin panel, send the /start command to the bot. From there, you can manage users, ban or search them, turn off the bot, get log reports, and more. Send the /start command to access the panel.
