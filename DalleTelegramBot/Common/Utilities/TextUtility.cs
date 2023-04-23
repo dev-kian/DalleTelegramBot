@@ -11,7 +11,7 @@ namespace DalleTelegramBot.Common.Utilities
         {
             var builder = new StringBuilder();
             builder.AppendLine($"👋🏻 {(newUser ? "Hello" : "Hello again")}! <b><a href=\"tg://user?id={userId}\">{name}</a></b>");
-            builder.AppendLine("Welcome to <b>DALLE-2</b> bot! We're excited to have you here.\n We'd like to let you know that our project is open source and available on GitHub for you to view and contribute. By visiting our GitHub page at <b><a href=\"google.com\">link</a></b>, you can get a better understanding of how our bot works, suggest new features or report issues. Thank you for using our bot and we hope you find it helpful!");
+            builder.AppendLine("Welcome to <b>DALLE-2</b> bot! We're excited to have you here.\n We'd like to let you know that our project is open source and available on GitHub for you to view and contribute. By visiting our GitHub page at <b><a href=\"https://github.com/dev-kian/DalleTelegramBot\">link</a></b>, you can get a better understanding of how our bot works, suggest new features or report issues. Thank you for using our bot and we hope you find it helpful!");
             builder.AppendLine();
             builder.AppendLine("<i>• Write a sentence for me to create a picture of it for you.</i>");
             builder.AppendLine();
