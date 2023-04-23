@@ -15,6 +15,7 @@ internal class BotRateLimitingQuery : BaseQuery, ISingletonDependency
 
     public override Task ExecuteAsync(CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
+        _telegramService.AnswerCallbackQueryAsync(callbackQuery.Id, "In this time is not available", cancellationToken);
         return Task.CompletedTask;
     }
 }

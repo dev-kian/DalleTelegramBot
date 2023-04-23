@@ -50,7 +50,7 @@ internal class CommunicateUsersCommand : BaseCommand, IScopedDependency
                 await Task.WhenAll(tasks);
             }
 
-            await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.CommunicateCommandEndForwardMessageForamt, sent, failed), ParseMode.MarkdownV2, cancellationToken);
+            await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.CommunicateCommandEndForwardMessageFormat, sent, failed), ParseMode.MarkdownV2, cancellationToken);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.Marshalling;
-using System.Threading;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -99,6 +97,16 @@ namespace DalleTelegramBot.Services.Telegram
         public async Task SendMediaGroupAsync(long userId, IEnumerable<IAlbumInputMedia> media, CancellationToken cancellationToken = default)
         {
             await _botClient.SendMediaGroupAsync(userId, media, cancellationToken: cancellationToken);
+        }
+
+
+        public async Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default)
+        {
+            await _botClient.AnswerCallbackQueryAsync(callbackQueryId, cancellationToken: cancellationToken);
+        }
+        public async Task AnswerCallbackQueryAsync(string callbackQueryId, string text, CancellationToken cancellationToken = default)
+        {
+            await _botClient.AnswerCallbackQueryAsync(callbackQueryId, text, showAlert: false, cacheTime: 0, cancellationToken: cancellationToken);
         }
     }
 }

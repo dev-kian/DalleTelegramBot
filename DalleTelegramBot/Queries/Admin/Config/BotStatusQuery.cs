@@ -26,12 +26,12 @@ internal class BotStatusQuery : BaseQuery, ISingletonDependency
         if(args.Any())
         {
             if (args[0] == "on")
-                BotConfig.TurnOnBot();
+                BotConfig.BotStatus = true;
             else if (args[0] == "off")
-                BotConfig.TurnOffBot();
+                BotConfig.BotStatus = false;
         }
 
-        bool botStatus = BotConfig.BotIsOn();
+        bool botStatus = BotConfig.BotStatus;
 
         var inlineKeyboard = new InlineKeyboardMarkup(new[]
         {

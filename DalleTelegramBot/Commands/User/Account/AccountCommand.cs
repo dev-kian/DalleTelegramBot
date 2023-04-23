@@ -1,4 +1,5 @@
 ﻿using DalleTelegramBot.Commands.Base;
+using DalleTelegramBot.Common;
 using DalleTelegramBot.Common.Attributes;
 using DalleTelegramBot.Common.Caching;
 using DalleTelegramBot.Common.Enums;
@@ -8,6 +9,7 @@ using DalleTelegramBot.Common.Utilities;
 using DalleTelegramBot.Configurations;
 using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Services.Telegram;
+using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -19,7 +21,7 @@ namespace DalleTelegramBot.Commands.User.Account
     {
         private readonly IUserRepository _userRepository;
         private readonly RateLimitingMemoryCache _cache;
-        public AccountCommand(ITelegramService telegramService, IUserRepository userRepository, RateLimitingMemoryCache cache) : base(telegramService)
+        public AccountCommand(ITelegramService telegramService, IUserRepository userRepository, IOptionsMonitor<AppSettings> options, RateLimitingMemoryCache cache) : base(telegramService)
         {
             _userRepository = userRepository;
             _cache = cache;
@@ -32,8 +34,8 @@ namespace DalleTelegramBot.Commands.User.Account
             var user = await _userRepository.GetByIdAsync(userId);
             
                 await _telegramService.SendMessageAsync(userId, TextUtility.AccountInfo(message.From!.FirstName, userId,
-                    user.CreateTime, _cache.GetMessageCount(userId), BotConfig.LimitCount),
-                InlineUtility.AccountSettingsInlineKeyboard, ParseMode.Markdown, cancellationToken);
+                    user.CreateTime, _cache.GetMessageCount(userId), BotConfig.RateLimitCount),
+                InlineUtility.AccountSettingsInlineKeyboard, ParseMode.Html, cancellationToken);
         }
     }
 }

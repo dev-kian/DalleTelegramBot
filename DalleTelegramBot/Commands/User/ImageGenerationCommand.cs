@@ -1,12 +1,16 @@
 ﻿using DalleTelegramBot.Commands.Base;
+using DalleTelegramBot.Common;
 using DalleTelegramBot.Common.Attributes;
 using DalleTelegramBot.Common.Caching;
 using DalleTelegramBot.Common.Enums;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
+using DalleTelegramBot.Common.Utilities;
+using DalleTelegramBot.Configurations;
 using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Services.OpenAI;
 using DalleTelegramBot.Services.Telegram;
+using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -20,7 +24,8 @@ namespace DalleTelegramBot.Commands.User
         private readonly IOpenAIClient _openAIClient;
         private readonly RateLimitingMemoryCache _rateLimitingCache;
         private readonly StateManagementMemoryCache _stateCache;
-        public ImageGenerationCommand(ITelegramService telegramService, IUserRepository userRepository, IOpenAIClient openAIClient, RateLimitingMemoryCache rateLimitingCache, StateManagementMemoryCache stateCache) : base(telegramService)
+        public ImageGenerationCommand(ITelegramService telegramService, IUserRepository userRepository, IOpenAIClient openAIClient, IOptionsMonitor<AppSettings> options,
+            RateLimitingMemoryCache rateLimitingCache, StateManagementMemoryCache stateCache) : base(telegramService)
         {
             _userRepository = userRepository;
             _openAIClient = openAIClient;
@@ -36,61 +41,63 @@ namespace DalleTelegramBot.Commands.User
 
             var apiKey = user.ApiKey;
 
-            if (message.Text.GetCommand("create-image"))
+            if (!message.Text.GetCommand("create-image"))
             {
-                if (string.IsNullOrEmpty(apiKey))
+                if (_stateCache.CanGetLastCommand(userId, "create-image", 2, false))
                 {
-                    if (!_rateLimitingCache.IsMessageLimitExceeded(userId))
+                    var messageResponse = await _telegramService.ReplyMessageAsync(userId, message.MessageId, TextUtility.ImgGenerationProcessingMessage, ParseMode.Markdown, cancellationToken);
+
+                    var imageResponse = await _openAIClient.GenerateImageAsync(new(message.Text, user.ImageCount, user.ImageSize), cancellationToken, apiKey: apiKey);
+                    
+                    if (imageResponse.IsSuccess)
                     {
-                        _stateCache.SetLastCommand(userId, "create-image", 2, data: "with-limit");
-                        await _telegramService.SendMessageAsync(userId, "Send prompt to generate image", cancellationToken);
+                        await _telegramService.EditMessageAsync(userId, messageResponse.MessageId, string.Format(TextUtility.ImgGenerationCompletedMessageFormat, imageResponse.Images!.ProcessingTime.ToString("ss\\.fff")), cancellationToken);
+                        await _telegramService.SendChatActionAsync(userId, ChatAction.UploadPhoto, cancellationToken);
+                        var media = imageResponse.Images.Data.Select(x => new InputMediaPhoto(new InputFileUrl(x.Url))).OfType<IAlbumInputMedia>();
+                        await _telegramService.SendMediaGroupAsync(userId, media, cancellationToken);
+                        if (_stateCache.CanGetCommandData(userId, true)[0].Equals("with-limit"))
+                        {
+                            _rateLimitingCache.UpdateUserMessageCount(userId, imageResponse.Images.Data.Count);
+                        }
                     }
                     else
                     {
-                        await _telegramService.SendMessageAsync(userId, "You can't generate image in 24 hours ago", cancellationToken);
+                        await _telegramService.EditMessageAsync(userId, messageResponse.MessageId,
+                            $"️ Uncompleted📛\n({imageResponse.Error!.ProcessingTime:ss\\.fff})\nError:{imageResponse.Error.Error.Message}");
                     }
                 }
-                else
-                {
-                    if (await _openAIClient.ValidateApiKey(apiKey, cancellationToken))
-                    {
-                        _stateCache.SetLastCommand(userId, "create-image", 2, data: "without-limit");
-                        await _telegramService.SendMessageAsync(userId, "Send prompt to generate image", cancellationToken);
-                    }
-                    else
-                    {
-                        await _telegramService.SendMessageAsync(userId, "Your api key is not valid", cancellationToken);
-                    }
-                }
+                return;
             }
-            else if (_stateCache.CanGetLastCommand(userId, "create-image", 2, false))
+
+            if (string.IsNullOrEmpty(apiKey))
             {
-                var messageResponse = await _telegramService.ReplyMessageAsync(userId, message.MessageId, "⏳Processing\n_please wait..._", ParseMode.Markdown, cancellationToken);
-
-                var imageResponse = await _openAIClient.GenerateImageAsync(new(message.Text, user.ImageCount, user.ImageSize), cancellationToken, apiKey: user.ApiKey);
-
-                if (imageResponse.IsSuccess)
+                if (_rateLimitingCache.IsMessageLimitExceeded(userId))
                 {
-                    await _telegramService.EditMessageAsync(userId, messageResponse.MessageId, $"⌛️Completed✅\n({imageResponse.Images!.ProcessingTime})", cancellationToken);
-
-                    await _telegramService.SendChatActionAsync(userId, ChatAction.UploadPhoto, cancellationToken);
-
-                    var media = imageResponse.Images.Data.Select(x => new InputMediaPhoto(new InputFileUrl(x.Url))).OfType<IAlbumInputMedia>();
-
-                    await _telegramService.SendMediaGroupAsync(userId, media, cancellationToken);
-
-                    bool hasLimit = _stateCache.CanGetCommandData(userId, true)[0].Equals("with-limit");
-                    if (hasLimit)//LOL
-                    {
-                        _rateLimitingCache.UpdateUserMessageCount(userId, imageResponse.Images.Data.Count);
-                    }
+                    await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationExceededMessage, cancellationToken);
+                    return;
                 }
-                else
+
+                int currentCountMessage = _rateLimitingCache.GetMessageCount(userId);
+                if ((user.ImageCount + currentCountMessage) > BotConfig.RateLimitCount)
                 {
-                    await _telegramService.EditMessageAsync(userId, messageResponse.MessageId,
-                        $"️ Uncompleted📛\n({imageResponse.Error.ProcessingTime})\nError:{imageResponse.Error.Error.Message}");
+                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.ImgGenerationLimitGenMessage, (BotConfig.RateLimitCount - currentCountMessage)), cancellationToken);
+                    return;
                 }
+
+                _stateCache.SetLastCommand(userId, "create-image", 2, data: "with-limit");
             }
+            else
+            {
+                if (!await _openAIClient.ValidateApiKey(apiKey, cancellationToken))
+                {
+                    await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationBadApiKeyMessage, cancellationToken);
+                    return;
+                }
+
+                _stateCache.SetLastCommand(userId, "create-image", 2, data: "without-limit");
+            }
+
+            await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationSendPromptMessage, cancellationToken);
         }
     }
 }

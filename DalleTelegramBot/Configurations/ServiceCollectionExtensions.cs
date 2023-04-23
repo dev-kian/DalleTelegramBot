@@ -6,7 +6,6 @@ using DalleTelegramBot.Data.Repositories;
 using DalleTelegramBot.Services.OpenAI;
 using DalleTelegramBot.Services.Telegram;
 using DalleTelegramBot.Services.Telegram.Handlers;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;

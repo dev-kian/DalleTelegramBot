@@ -8,11 +8,11 @@ using Telegram.Bot.Types;
 
 namespace DalleTelegramBot.Queries.Admin.Communicate
 {
-    [Query("communicate-user")]
-    internal class CommunicateUserQuery : BaseQuery, ISingletonDependency
+    [Query("communicate-users")]
+    internal class CommunicateUsersQuery : BaseQuery, ISingletonDependency
     {
         private readonly StateManagementMemoryCache _cache;
-        public CommunicateUserQuery(ITelegramService telegramService, StateManagementMemoryCache cache) : base(telegramService)
+        public CommunicateUsersQuery(ITelegramService telegramService, StateManagementMemoryCache cache) : base(telegramService)
         {
             _cache = cache;
         }
@@ -21,9 +21,9 @@ namespace DalleTelegramBot.Queries.Admin.Communicate
         {
             long userId = callbackQuery.UserId();
 
-            _cache.SetLastCommand(userId, "communicate-user", 1);
-            
-            await _telegramService.SendMessageAsync(callbackQuery.UserId(), "Send user id to send message", cancellationToken);
+            _cache.SetLastCommand(userId, "communicate-users", 1);
+
+            await _telegramService.SendMessageAsync(callbackQuery.UserId(), "Send your message to forward", cancellationToken);
         }
     }
 }

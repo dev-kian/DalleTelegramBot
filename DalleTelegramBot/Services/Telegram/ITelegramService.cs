@@ -31,5 +31,8 @@ namespace DalleTelegramBot.Services.Telegram
         Task SendChatActionAsync(long userId, ChatAction chatAction, CancellationToken cancellationToken = default);
 
         Task SendMediaGroupAsync(long userId, IEnumerable<IAlbumInputMedia> media, CancellationToken cancellationToken = default);
+
+        Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default);
+        Task AnswerCallbackQueryAsync(string callbackQueryId, string text, CancellationToken cancellationToken = default);
     }
 }

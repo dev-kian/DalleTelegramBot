@@ -20,9 +20,8 @@ namespace DalleTelegramBot.Commands.User
         public override async Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
             long userId = message.UserId();
-
             await _telegramService.SendMessageAsync(userId,
-                $"Dear _{message.From!.FirstName}_, to contact the robot support, you can refer to the Telegram ID @jkianj", ParseMode.Markdown, cancellationToken);
+                $"Dear _{message.From!.FirstName}_, to contact the bot support, you can refer to the Telegram ID @jkianj", ParseMode.Markdown, cancellationToken);
         }
     }
 }

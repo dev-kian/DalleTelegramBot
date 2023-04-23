@@ -1,6 +1,7 @@
 ﻿using DalleTelegramBot.Common.Attributes;
 using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
+using DalleTelegramBot.Common.Utilities;
 using DalleTelegramBot.Queries.Base;
 using DalleTelegramBot.Services.Telegram;
 using Serilog;
@@ -35,7 +36,7 @@ internal class BotLogReportQuery : BaseQuery , ISingletonDependency
                 CopyDirectory(logsDirectoryPath, logsDirectoryDestinationPath);
 
                 ZipFile.CreateFromDirectory(logsDirectoryDestinationPath, logsZipPath);
-                await _telegramService.SendDocumentAsync(userId, logsZipPath, $"Logs report\n{DateTime.Now:G}\nSha256:`{await GetFileHash(logsZipPath)}`", ParseMode.Markdown, cancellationToken);
+                await _telegramService.SendDocumentAsync(userId, logsZipPath, $"Logs report\n{DateTime.Now:G}\nSha256:`{await SecurityHelper.GetFileHash(logsZipPath)}`", ParseMode.Markdown, cancellationToken);
 
                 DeleteIfExists(logsDirectoryDestinationPath);
                 DeleteIfExists(logsZipPath);
@@ -47,7 +48,7 @@ internal class BotLogReportQuery : BaseQuery , ISingletonDependency
         }
         else
         {
-            await _telegramService.SendMessageAsync(userId, $"logs directory could not be found or it may not exist", cancellationToken);
+            await _telegramService.SendMessageAsync(userId, TextUtility.BotLogNotFoundDirectory, cancellationToken);
         }
     }
 
@@ -60,7 +61,7 @@ internal class BotLogReportQuery : BaseQuery , ISingletonDependency
             Directory.Delete(path, true);
     }
 
-    public void CopyDirectory(string sourceDirectory, string destinationDirectory)
+    private void CopyDirectory(string sourceDirectory, string destinationDirectory)
     {
         string[] subdirectories = Directory.GetDirectories(sourceDirectory);
         if (!Directory.Exists(destinationDirectory))
@@ -71,19 +72,5 @@ internal class BotLogReportQuery : BaseQuery , ISingletonDependency
 
         foreach (string subdirectory in subdirectories)
             CopyDirectory(subdirectory, Path.Combine(destinationDirectory, Path.GetFileName(subdirectory)));
-    }
-
-
-    public async Task<string> GetFileHash(string filePath)//todo: move to SecHelper.cs in utils
-    {
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            {
-                byte[] hashBytes = await sha256.ComputeHashAsync(fileStream);
-                string hashString = BitConverter.ToString(hashBytes).Replace("-", "");
-                return hashString;
-            }
-        }
     }
 }

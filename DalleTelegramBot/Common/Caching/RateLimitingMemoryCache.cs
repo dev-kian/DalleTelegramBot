@@ -1,13 +1,14 @@
 ﻿using DalleTelegramBot.Common.Caching.SharedData;
 using DalleTelegramBot.Configurations;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace DalleTelegramBot.Common.Caching
 {
     internal class RateLimitingMemoryCache
     {
         private readonly IMemoryCache _cache;
-        public RateLimitingMemoryCache(IMemoryCache cache)
+        public RateLimitingMemoryCache(IMemoryCache cache, IOptionsMonitor<AppSettings> options)
         {
             _cache = cache;
         }
@@ -16,7 +17,7 @@ namespace DalleTelegramBot.Common.Caching
         {
             if (_cache.TryGetValue(userId, out UserMessageInfo? userMessageInfo))
             {
-                if (userMessageInfo?.MessageCount >= BotConfig.LimitCount)
+                if (userMessageInfo?.MessageCount >= BotConfig.RateLimitCount)
                 {
                     if ((DateTime.UtcNow - userMessageInfo.LastMessageTime) < TimeSpan.FromDays(1))
                     {

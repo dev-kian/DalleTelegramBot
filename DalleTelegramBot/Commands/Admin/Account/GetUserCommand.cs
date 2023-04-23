@@ -41,7 +41,7 @@ namespace DalleTelegramBot.Commands.Admin.Account
 
                     await _telegramService.SendMessageAsync(userId,
                         TextUtility.UserInfo(user.Id, user.IsBan, user.CreateTime),
-                        InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton: false), ParseMode.MarkdownV2, cancellationToken);
+                        InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton: false), ParseMode.Html, cancellationToken);
                 }
             }
         }

@@ -12,6 +12,7 @@ using Telegram.Bot.Types.Enums;
 namespace DalleTelegramBot.Queries.User.Account;
 
 [Query("config-api-key")]
+[CheckBanUser]
 internal class ConfigApiKeyQuery : BaseQuery, IScopedDependency
 {
     private readonly IUserRepository _userRepository;
@@ -36,7 +37,7 @@ internal class ConfigApiKeyQuery : BaseQuery, IScopedDependency
             else if (args[0] == "set")
             {
                 _cache.SetLastCommand(userId, "config-api-key", 1, data: callbackQuery.Message!.MessageId);
-                await _telegramService.SendMessageAsync(userId, $"Send your api key", cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.ConfigApiKeyGiveSecKey, cancellationToken);
                 return;
             }
         }

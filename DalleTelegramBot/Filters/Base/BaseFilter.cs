@@ -9,5 +9,6 @@ internal abstract class BaseFilter : IFilter
     public BaseFilter(ITelegramService telegramService) =>
         _telegramService = telegramService;
 
-    public abstract Task<bool> CheckAsync(Message message, CancellationToken token = default);
+    public abstract Task<bool> CheckAsync(Message message, CancellationToken cancellationToken = default);
+    public abstract Task<bool> CheckAsync(CallbackQuery message, CancellationToken cancellationToken = default);
 }

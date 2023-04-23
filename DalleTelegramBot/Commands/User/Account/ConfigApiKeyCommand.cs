@@ -5,6 +5,7 @@ using DalleTelegramBot.Common.Extensions;
 using DalleTelegramBot.Common.IDependency;
 using DalleTelegramBot.Common.Utilities;
 using DalleTelegramBot.Data.Contracts;
+using DalleTelegramBot.Services.OpenAI;
 using DalleTelegramBot.Services.Telegram;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -16,11 +17,13 @@ namespace DalleTelegramBot.Commands.User.Account
     internal class ConfigApiKeyCommand : BaseCommand, IScopedDependency
     {
         private readonly IUserRepository _userRepository;
+        private readonly IOpenAIClient _openAIClient;
         private readonly StateManagementMemoryCache _cache;
 
-        public ConfigApiKeyCommand(ITelegramService telegramService, IUserRepository userRepository, StateManagementMemoryCache cache) : base(telegramService)
+        public ConfigApiKeyCommand(ITelegramService telegramService, IUserRepository userRepository, IOpenAIClient openAIClient, StateManagementMemoryCache cache) : base(telegramService)
         {
             _userRepository = userRepository;
+            _openAIClient = openAIClient;
             _cache = cache;
         }
 
@@ -33,7 +36,13 @@ namespace DalleTelegramBot.Commands.User.Account
 
                 if (!apiKey.ValidateApiKey())
                 {
-                    await _telegramService.SendMessageAsync(userId, "Your api key is not valid", cancellationToken);
+                    await _telegramService.ReplyMessageAsync(userId, message.MessageId, TextUtility.ConfigApiKeyBadFormatMessage, cancellationToken);
+                    return;
+                }
+
+                if (!await _openAIClient.ValidateApiKey(apiKey))
+                {
+                    await _telegramService.ReplyMessageAsync(userId, message.MessageId, TextUtility.ConfigApiKeyBadRequestMessage, cancellationToken);
                     return;
                 }
 

@@ -1,10 +1,12 @@
-﻿using DalleTelegramBot.Data.Repositories;
+﻿using DalleTelegramBot.Common;
+using DalleTelegramBot.Data.Repositories;
 using DalleTelegramBot.Services.OpenAI;
 using DalleTelegramBot.Services.Telegram;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +20,16 @@ namespace DalleTelegramBot
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+        private readonly AppSettings _settings;
+        private ITelegramService _telegramService;
         private readonly ILogger<HostedService> _logger;
-        public HostedService(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<HostedService> logger)
+        public HostedService(IConfiguration configuration, IServiceProvider serviceProvider, 
+            IOptionsMonitor<AppSettings> options, ITelegramService telegramService, ILogger<HostedService> logger)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+            _telegramService = telegramService;
+            _settings = options.CurrentValue;
             _logger = logger;
         }
 
@@ -34,6 +41,9 @@ namespace DalleTelegramBot
 
             // Start the polling service
             _logger.LogInformation("Starting polling service");
+
+            await _telegramService.SendMessageAsync(_settings.TelegramSettings.AdminId, "Bot turned on...", stoppingToken);
+
             _= StartReceivingAsync(stoppingToken);
         }
         

@@ -35,11 +35,7 @@ namespace DalleTelegramBot.Common.Caching
             if(!string.IsNullOrEmpty(userMessageInfo.LastCommand) && userMessageInfo.LastCommand.Equals(lastCommand) && userMessageInfo.StateCommand == state)
             {
                 if (deleteCommand)
-                {
-                    userMessageInfo!.LastCommand = null!;
-                    userMessageInfo!.StateCommand = 0;
-                    userMessageInfo!.Data = null!;
-                }
+                    ClearLastCommand(userMessageInfo!);
 
                 return true;
             }
@@ -59,12 +55,22 @@ namespace DalleTelegramBot.Common.Caching
             bool existsMessageInfo = _cache.TryGetValue(userId, out UserMessageInfo? userMessageInfo);
             var data = (existsMessageInfo ? userMessageInfo?.Data : null)!;
             if (existsMessageInfo && deleteCommand)
-            {
-                userMessageInfo!.LastCommand = null!;
-                userMessageInfo!.StateCommand = 0;
-                userMessageInfo!.Data = null!;
-            }
+                ClearLastCommand(userMessageInfo!);
             return data;
+        }
+
+        public void RemoveLastCommand(long userId)
+        {
+            bool existsMessageInfo = _cache.TryGetValue(userId, out UserMessageInfo? userMessageInfo);
+            if (existsMessageInfo)
+                ClearLastCommand(userMessageInfo!);
+        }
+
+        private void ClearLastCommand(UserMessageInfo userMessageInfo)
+        {
+            userMessageInfo!.LastCommand = null!;
+            userMessageInfo!.StateCommand = 0;
+            userMessageInfo!.Data = null!;
         }
     }
 }

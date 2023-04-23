@@ -10,6 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace DalleTelegramBot.Queries.User.Account
 {
     [Query("config-img-generation")]
+    [CheckBanUser]
     internal class ConfigImageGenerationQuery : BaseQuery, IScopedDependency
     {
         public ConfigImageGenerationQuery(ITelegramService telegramService) : base(telegramService)

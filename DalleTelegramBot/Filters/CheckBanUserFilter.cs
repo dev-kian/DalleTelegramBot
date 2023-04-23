@@ -9,7 +9,7 @@ using Telegram.Bot.Types;
 
 namespace DalleTelegramBot.Filters
 {
-    internal class CheckBanUserFilter : BaseFilter, IScopedDependency//TODO: maybe better use singleton
+    internal class CheckBanUserFilter : BaseFilter, IScopedDependency
     {
         private readonly TelegramSettings _settings;
         private IUserRepository _userRepository;
@@ -19,10 +19,10 @@ namespace DalleTelegramBot.Filters
             _userRepository = userRepository;
         }
 
-        public override async Task<bool> CheckAsync(Message message, CancellationToken token = default)
+        public override async Task<bool> CheckAsync(Message message, CancellationToken cancellationToken = default)
         {
-            var userId = message.Chat.Id;
-            if (userId == _settings.AdminId)
+            var userId = message.UserId();
+            if (IsAdmin(userId))
                 return true;
 
             var user = await _userRepository.GetByIdAsync(userId);
@@ -30,7 +30,7 @@ namespace DalleTelegramBot.Filters
             {
                 if (!message.Text!.GetCommand("/start"))
                 {
-                    await _telegramService.SendMessageAsync(userId, "Hi There!\nBefore use this but we need you send /start to register you!");
+                    await _telegramService.SendMessageAsync(userId, "Unfortunately, we could not find your account, please send the /start command to recreate the account");
                     return false;
                 }
                 return true;
@@ -40,5 +40,26 @@ namespace DalleTelegramBot.Filters
 
             return !user.IsBan;
         }
+
+        public override async Task<bool> CheckAsync(CallbackQuery callbackQuery, CancellationToken cancellationToken = default)
+        {
+            var userId = callbackQuery.UserId();
+            if (IsAdmin(userId))
+                return true;
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user is null)
+            {
+                await _telegramService.AnswerCallbackQueryAsync(callbackQuery.Id, "Unfortunately, we could not find your account, please send the /start command to recreate the account");
+                return false;
+            }
+            if (user.IsBan)
+                await _telegramService.AnswerCallbackQueryAsync(callbackQuery.Id, "Your account is banned!", cancellationToken);
+
+            return !user.IsBan;
+        }
+
+        private bool IsAdmin(long userId)
+            => userId == _settings.AdminId;
     }
 }

@@ -38,13 +38,13 @@ namespace DalleTelegramBot.Queries.Admin
             if (user is null)
                 return;
 
-            user.IsBan = !user.IsBan;//TODO: i think is better go this line and bottom line in repository!!!
+            user.IsBan = !user.IsBan;
 
             await _userRepository.UpdateBanStateAsync(userId, user.IsBan);
 
             await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId,
                 TextUtility.UserInfo(user.Id, user.IsBan, user.CreateTime),
-                InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton), ParseMode.MarkdownV2, cancellationToken);
+                InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton), ParseMode.Html, cancellationToken);
         }
     }
 }
