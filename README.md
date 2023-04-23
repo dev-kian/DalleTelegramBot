@@ -33,6 +33,7 @@ To create an image, select the "Create Image" option from the menu. The bot will
 To configure image size and image count and configure API key, select the "Account" option from the menu. From there, you can change your image size and image count and own OpenAI API key settings.
 ![](screens/screen06.png)
 
+
 ## Admin Panel
 To access the admin panel, send the /start command to the bot. From there, you can manage users, ban or search them, turn off the bot, get log reports, and more. Send the /start command to access the panel.
 
