@@ -30,7 +30,7 @@ internal class CommunicateUsersCommand : BaseCommand, IScopedDependency
         if(_cache.CanGetLastCommand(userId, "communicate-users", 1, true))
         {
             var usersBanned = await _userRepository.GetAllAsync(isBan: false);
-            await _telegramService.SendMessageAsync(userId, TextUtility.CommunicateCommandStartForwardingMessageFormat, ParseMode.MarkdownV2, cancellationToken);
+            await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.CommunicateCommandStartForwardingMessageFormat, userId), ParseMode.MarkdownV2, cancellationToken);
             var usersChunks = usersBanned.Chunk(100);
             int sent = 0, failed = 0;
             foreach (var usersChunk in usersChunks)

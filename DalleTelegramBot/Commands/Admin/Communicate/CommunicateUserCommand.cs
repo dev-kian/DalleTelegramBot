@@ -42,7 +42,7 @@ internal class CommunicateUserCommand : BaseCommand, IScopedDependency
             }
             else
             {
-                await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.GetUserCommandNotValidUserId, inputUserId), cancellationToken);
+                await _telegramService.SendMessageAsync(userId, TextUtility.GetUserCommandNotValidUserId, cancellationToken);
             }
         }
         else if (_cache.CanGetLastCommand(userId, "communicate-user", 2))
