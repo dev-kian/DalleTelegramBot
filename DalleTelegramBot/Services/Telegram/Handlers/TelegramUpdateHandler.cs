@@ -92,14 +92,10 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
 
                 if(commandInfo is null)
                 {
-                    if(_settings.AdminId == userId)
-                    {
-                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandAdminMessage, cancellationToken);
-                    }
-                    else
-                    {
-                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandMessage, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
-                    }
+                    var message = _settings.AdminId == userId ? TextUtility.NotExistsCommandAdminMessage : TextUtility.NotExistsCommandMessage;
+                    
+                    await _telegramService.SendMessageAsync(userId, message, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                    
                     return;
                 }
 
@@ -125,6 +121,7 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
                 {
                     throw new NullReferenceException($"Failed to get service for command '{commandName}'.");
                 }
+
                 try
                 {
                     await service.ExecuteAsync(message, cancellationToken);
@@ -139,9 +136,8 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
 
         private async Task<bool> FilterPipeline(AsyncServiceScope scope, Type type, object obj, CancellationToken cancellationToken)
         {
-
-
             var attributeTypes = type.GetCustomAttributes<FilterAttribute>();
+            
             foreach (var attributeType in attributeTypes)
             {
                 var filterType = attributeType.FilterType;
@@ -158,16 +154,15 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
 
                 try
                 {
-                    if (obj is Message msg)
+                    var checkResult = obj switch
                     {
-                        if (!await filter.CheckAsync(msg, cancellationToken))
-                            return false;
-                    }
-                    else if (obj is CallbackQuery callback)
-                    {
-                        if (!await filter.CheckAsync(callback, cancellationToken))
-                            return false;
-                    }
+                        Message msg => await filter.CheckAsync(msg, cancellationToken),
+                        CallbackQuery callback => await filter.CheckAsync(callback, cancellationToken),
+                        _ => false
+                    };
+
+                    if (!checkResult)
+                        return false;
                 }
                 catch (Exception ex)
                 {

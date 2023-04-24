@@ -16,6 +16,12 @@ internal static class TelegramExtensions
         // Escape the dot character
         text = text.Replace(".", "\\.");
 
+        // Escape the greater-than sign character
+        text = text.Replace(">", "\\>");
+
+        // Escape the less-than sign character
+        text = text.Replace("<", "\\<");
+
         // Escape the underscore character
         text = text.Replace("_", "\\_");
 

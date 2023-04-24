@@ -10,7 +10,6 @@ using DalleTelegramBot.Configurations;
 using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Services.OpenAI;
 using DalleTelegramBot.Services.Telegram;
-using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -24,7 +23,7 @@ namespace DalleTelegramBot.Commands.User
         private readonly IOpenAIClient _openAIClient;
         private readonly RateLimitingMemoryCache _rateLimitingCache;
         private readonly StateManagementMemoryCache _stateCache;
-        public ImageGenerationCommand(ITelegramService telegramService, IUserRepository userRepository, IOpenAIClient openAIClient, IOptionsMonitor<AppSettings> options,
+        public ImageGenerationCommand(ITelegramService telegramService, IUserRepository userRepository, IOpenAIClient openAIClient,
             RateLimitingMemoryCache rateLimitingCache, StateManagementMemoryCache stateCache) : base(telegramService)
         {
             _userRepository = userRepository;
@@ -73,14 +72,14 @@ namespace DalleTelegramBot.Commands.User
             {
                 if (_rateLimitingCache.IsMessageLimitExceeded(userId))
                 {
-                    await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationExceededMessage, cancellationToken);
+                    await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationExceededMessage, ParseMode.Markdown, cancellationToken);
                     return;
                 }
 
                 int currentCountMessage = _rateLimitingCache.GetMessageCount(userId);
                 if ((user.ImageCount + currentCountMessage) > BotConfig.RateLimitCount)
                 {
-                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.ImgGenerationLimitGenMessage, (BotConfig.RateLimitCount - currentCountMessage)), cancellationToken);
+                    await _telegramService.SendMessageAsync(userId, string.Format(TextUtility.ImgGenerationLimitGenMessage, (BotConfig.RateLimitCount - currentCountMessage)), ParseMode.Markdown, cancellationToken);
                     return;
                 }
 

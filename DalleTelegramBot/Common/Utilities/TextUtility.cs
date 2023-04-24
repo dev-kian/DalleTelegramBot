@@ -1,7 +1,5 @@
 ﻿using DalleTelegramBot.Common.SystemMetadata;
-using DalleTelegramBot.Configurations;
 using System.Text;
-using System.Threading.Tasks.Dataflow;
 
 namespace DalleTelegramBot.Common.Utilities
 {
@@ -35,24 +33,25 @@ namespace DalleTelegramBot.Common.Utilities
         public const string CommunicateCommandMessageFormat = "Your message has been successfully forwarded to {0} ({1}).";
         public const string CommunicateCommandStartForwardingMessageFormat = "Start forwarding your message to {0} users.";
         public const string CommunicateCommandSendMessage = "Please enter the message you would like to send.";
-        public const string CommunicateCommandEndForwardMessageFormat = "Your message has been successfully forwarded to {0} users.\nFailed to send to: {1}.";
+        public const string CommunicateCommandEndForwardMessageFormat = "Your message has been successfully forwarded to {0} users.\nFailed to send to: {1} users.";
 
         public const string BotOffMessage = "Sorry, the bot is currently offline or undergoing maintenance. We apologize for the inconvenience and will be back online as soon as possible. Thank you for your patience!";
         public const string UnknownCommandMessage = "Unfortunately, we are unable to understand your command.";
         public const string NotExistsCommandMessage = "Sorry, your command does not exist.\nUse the buttons below:";
         public const string NotExistsCommandAdminMessage = "Dear admin, your command does not exist.\nSend /start to access panel";
         public const string ExecuteByUserOnlyMessage = "This command can only be executed by users.";
-        public const string ExceptionHappenedMessage = "⚠️Unfortunately, there is a problem in executing the order\nContact support if needed.";
+        public const string ExceptionHappenedMessage = "⚠️Unfortunately, a problem has occurred in the implementation of this operation.\nContact support if needed.";
 
         public const string ConfigApiKeyBadFormatMessage = "Invalid API key format.";
         public const string ConfigApiKeyBadRequestMessage = "Unauthorized API key.";
 
         public const string ImgGenerationProcessingMessage = "⏳Processing\n_please wait..._";
         public const string ImgGenerationCompletedMessageFormat = "⌛️Completed✅\n({0})";
-        public const string ImgGenerationExceededMessage = "You can't generate image in 24 hours ago";
-        public const string ImgGenerationLimitGenMessage = "You can only make {0} more photos";
+        public const string ImgGenerationExceededMessage = $"You can't generate image in 24 hours ago.{ImgGenerationWithoutLimitMessage}";
+        public const string ImgGenerationLimitGenMessage = "You can only make {0} more photos." + ImgGenerationWithoutLimitMessage;
         public const string ImgGenerationBadApiKeyMessage = "Sorry, there was an error with your API key. OpenAI was unable to authorize your key.";
         public const string ImgGenerationSendPromptMessage = "Please send a prompt to generate your image";
+        private const string ImgGenerationWithoutLimitMessage = "\n\n_♨️If you want to use the bot without restrictions, you can set your personal api key in the Account > Config Api Key settings._";
 
         public const string BotLogNotFoundDirectory = "logs directory could not be found or it may not exist";
 
