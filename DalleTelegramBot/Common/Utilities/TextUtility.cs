@@ -33,9 +33,9 @@ namespace DalleTelegramBot.Common.Utilities
         public const string ConfigApiKeyHasNotValue = "You haven't set a secret key yet.";
 
         public const string CommunicateCommandMessageFormat = "Your message has been successfully forwarded to {0} ({1}).";
-        public const string CommunicateCommandStartForwardingMessageFormat = "Start forwarding your message to *{0}* users.";
+        public const string CommunicateCommandStartForwardingMessageFormat = "Start forwarding your message to {0} users.";
         public const string CommunicateCommandSendMessage = "Please enter the message you would like to send.";
-        public const string CommunicateCommandEndForwardMessageFormat = "Your message has been successfully forwarded to *{0}* users. Failed to send to: *{1}*.";
+        public const string CommunicateCommandEndForwardMessageFormat = "Your message has been successfully forwarded to {0} users.\nFailed to send to: {1}.";
 
         public const string BotOffMessage = "Sorry, the bot is currently offline or undergoing maintenance. We apologize for the inconvenience and will be back online as soon as possible. Thank you for your patience!";
         public const string UnknownCommandMessage = "Unfortunately, we are unable to understand your command.";

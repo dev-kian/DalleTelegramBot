@@ -13,6 +13,9 @@ internal static class TelegramExtensions
 
     public static string EscapeMarkdownV2(this string text)
     {
+        // Escape the dot character
+        text = text.Replace(".", "\\.");
+
         // Escape the underscore character
         text = text.Replace("_", "\\_");
 
