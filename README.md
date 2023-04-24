@@ -46,9 +46,9 @@ To access the admin panel, send the /start command to the bot. From there, you c
     <img src="/screens/screen02.png" width="49%" /> 
   </div>
   <div>
-    <img src="/screens/screen03.png" width="33%" height="230px" />
-    <img src="/screens/screen04.png" width="33%" height="230px" /> 
-    <img src="/screens/screen05.png" width="33%" height="230px" /> 
+    <img src="/screens/screen03.png" width="30%" height="230px" />
+    <img src="/screens/screen04.png" width="30%" height="230px" /> 
+    <img src="/screens/screen05.png" width="30%" height="230px" /> 
   </div>
 </p>
 
