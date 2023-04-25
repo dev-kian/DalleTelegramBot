@@ -1,4 +1,4 @@
-# Telegram Bot for Image Generation with DALL-E OpenAI
+# DALL-E OpenAI Telegram Bot
 
 This Telegram bot allows users to generate images with the DALL-E OpenAI model. Users can send a prompt to the bot, which will generate an image according to the prompt. The bot is highly customizable, allowing users to set the image size and count, and even configure their own OpenAI API key.
 If you would like to test this project, you can try it out by using the <a href="https://t.me/ai_dallebot" target="_blank">AI DALL-E Bot</a> on Telegram.
