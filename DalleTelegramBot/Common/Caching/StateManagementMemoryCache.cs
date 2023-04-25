@@ -1,5 +1,6 @@
 ﻿using DalleTelegramBot.Common.Caching.SharedData;
 using Microsoft.Extensions.Caching.Memory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DalleTelegramBot.Common.Caching
 {
@@ -57,6 +58,15 @@ namespace DalleTelegramBot.Common.Caching
             if (existsMessageInfo && deleteCommand)
                 ClearLastCommand(userMessageInfo!);
             return data;
+        }
+
+        public void AddDataIfExistsCommand(long userId, params object[] data)
+        {
+            bool existsMessageInfo = _cache.TryGetValue(userId, out UserMessageInfo? userMessageInfo);
+            if (existsMessageInfo && userMessageInfo!.Data is not null)
+            {
+                userMessageInfo.Data = userMessageInfo!.Data.Concat(data).ToArray();
+            }
         }
 
         public void RemoveLastCommand(long userId)

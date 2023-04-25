@@ -51,7 +51,9 @@ namespace DalleTelegramBot.Common.Utilities
         public const string ImgGenerationLimitGenMessage = "You can only make {0} more photos." + ImgGenerationWithoutLimitMessage;
         public const string ImgGenerationBadApiKeyMessage = "Sorry, there was an error with your API key. OpenAI was unable to authorize your key.";
         public const string ImgGenerationSendPromptMessage = "Please send a prompt to generate your image";
-        public const string ImgGenerationCancelMessage = "The image creation operation was successfully canceled.";
+        public const string ImgGenerationCancelMessage = "♻️The image creation operation was successfully canceled.";
+        public const string ImgGenerationNotFinishingTaskMessage = "🚫Please wait until the previous task is completed.";
+        public const string ImgGenerationCannotCancelMessage = "🚫You cannot cancel the task at this time, please wait until the task is finished.";
         private const string ImgGenerationWithoutLimitMessage = "\n\n_♨️If you want to use the bot without restrictions, you can set your personal api key in the Account > Config Api Key settings._";
 
         public const string BotLogNotFoundDirectory = "logs directory could not be found or it may not exist";
