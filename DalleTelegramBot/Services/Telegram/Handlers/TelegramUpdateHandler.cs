@@ -94,11 +94,11 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
                 {
                     if(_settings.AdminId == userId)
                     {
-                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandAdminMessage, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandAdminMessage, cancellationToken);
                     }
                     else
                     {
-                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandMessage, cancellationToken);
+                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandMessage, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
                     }
 
                     return;

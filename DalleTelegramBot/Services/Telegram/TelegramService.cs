@@ -60,6 +60,7 @@ namespace DalleTelegramBot.Services.Telegram
         {
             return await _botClient.EditMessageTextAsync(id, messageId, text, parseMode: parseMode, replyMarkup: replyMarkup, cancellationToken: cancellationToken);
         }
+
         public async Task<Message> EditMessageAsync(ChatId id, int messageId, string text, ParseMode parseMode, CancellationToken cancellationToken = default)
         {
             return await _botClient.EditMessageTextAsync(id, messageId, text, parseMode: parseMode, cancellationToken: cancellationToken);
@@ -94,9 +95,9 @@ namespace DalleTelegramBot.Services.Telegram
             await _botClient.SendChatActionAsync(userId, chatAction, cancellationToken: cancellationToken);
         }
 
-        public async Task SendMediaGroupAsync(long userId, IEnumerable<IAlbumInputMedia> media, CancellationToken cancellationToken = default)
+        public async Task SendMediaGroupAsync(long userId, int messageId, IEnumerable<IAlbumInputMedia> media, CancellationToken cancellationToken = default)
         {
-            await _botClient.SendMediaGroupAsync(userId, media, cancellationToken: cancellationToken);
+            await _botClient.SendMediaGroupAsync(userId, media, replyToMessageId: messageId, cancellationToken: cancellationToken);
         }
 
 

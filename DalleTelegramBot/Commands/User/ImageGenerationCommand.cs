@@ -12,6 +12,7 @@ using DalleTelegramBot.Services.OpenAI;
 using DalleTelegramBot.Services.Telegram;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace DalleTelegramBot.Commands.User
 {
@@ -39,25 +40,39 @@ namespace DalleTelegramBot.Commands.User
             var user = await _userRepository.GetByIdAsync(userId);
 
             var apiKey = user.ApiKey;
+            if (message.Text.GetCommand("cancel"))
+            {
+                _stateCache.RemoveLastCommand(userId);
+                await _telegramService.SendMessageAsync(userId, "Your operation cancelled", 
+                    replyMarkup: InlineUtility.StartCommandReplyKeyboard, cancellationToken);
 
+                return;
+            }
             if (!message.Text.GetCommand("create-image"))
             {
                 if (_stateCache.CanGetLastCommand(userId, "create-image", 2, false))
                 {
-                    var messageResponse = await _telegramService.ReplyMessageAsync(userId, message.MessageId, TextUtility.ImgGenerationProcessingMessage, ParseMode.Markdown, cancellationToken);
+                    var messageResponse = await _telegramService.ReplyMessageAsync(userId, message.MessageId, TextUtility.ImgGenerationProcessingMessage,
+                        replyMarkup: new ReplyKeyboardRemove(), ParseMode.Markdown, cancellationToken);
 
-                    var imageResponse = await _openAIClient.GenerateImageAsync(new(message.Text, user.ImageCount, user.ImageSize), cancellationToken, apiKey: apiKey);
+                    var imageResponse = await _openAIClient.GenerateImageAsync(new(message.Text, user.ImageCount, user.ImageSize),
+                        cancellationToken, apiKey: apiKey);
                     
                     if (imageResponse.IsSuccess)
                     {
-                        await _telegramService.EditMessageAsync(userId, messageResponse.MessageId, string.Format(TextUtility.ImgGenerationCompletedMessageFormat, imageResponse.Images!.ProcessingTime.ToString("ss\\.fff")), cancellationToken);
-                        await _telegramService.SendChatActionAsync(userId, ChatAction.UploadPhoto, cancellationToken);
-                        var media = imageResponse.Images.Data.Select(x => new InputMediaPhoto(new InputFileUrl(x.Url))).OfType<IAlbumInputMedia>();
-                        await _telegramService.SendMediaGroupAsync(userId, media, cancellationToken);
+                        await _telegramService.DeleteMessageAsync(userId, messageResponse.MessageId, cancellationToken);
+                        messageResponse = await _telegramService.ReplyMessageAsync(userId, message.MessageId, string.Format(
+                            TextUtility.ImgGenerationCompletedMessageFormat, imageResponse.Images!.ProcessingTime.ToString("ss\\.fff")),
+                            InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+
                         if (_stateCache.CanGetCommandData(userId, true)[0].Equals("with-limit"))
                         {
                             _rateLimitingCache.UpdateUserMessageCount(userId, imageResponse.Images.Data.Count);
                         }
+
+                        await _telegramService.SendChatActionAsync(userId, ChatAction.UploadPhoto, cancellationToken);
+                        var media = imageResponse.Images.Data.Select(x => new InputMediaPhoto(new InputFileUrl(x.Url))).OfType<IAlbumInputMedia>();
+                        await _telegramService.SendMediaGroupAsync(userId, message.MessageId, media, cancellationToken);
                     }
                     else
                     {
@@ -96,7 +111,8 @@ namespace DalleTelegramBot.Commands.User
                 _stateCache.SetLastCommand(userId, "create-image", 2, data: "without-limit");
             }
 
-            await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationSendPromptMessage, cancellationToken);
+            await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationSendPromptMessage,
+                replyMarkup: new ReplyKeyboardMarkup(new KeyboardButton("❌Cancel")) { ResizeKeyboard = true, OneTimeKeyboard = true }, cancellationToken);
         }
     }
 }
