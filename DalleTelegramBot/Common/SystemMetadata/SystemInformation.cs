@@ -18,11 +18,25 @@ internal class SystemInformation
             return await GetOSInfo<UnixInfo>();
         }
 
-        return null!;
+        return CreateEmptyOSInfo();
     }
 
     private static async Task<OSInfo> GetOSInfo<TOS>() where TOS : IOSInfo
     {
-        return await Activator.CreateInstance<TOS>().GetOSInfo();
+        var instance = Activator.CreateInstance(typeof(TOS), args: new[] { CreateEmptyOSInfo() });
+        return await (instance as IOSInfo)!.GetOSInfo();
+    }
+
+    private static OSInfo CreateEmptyOSInfo()
+    {
+        var emptyOSInfo = new OSInfo()
+        {
+            Platform = "Unknown",
+            TotalMemorySize = -1,
+            UsedMemorySize = -1,
+            FreeMemorySize = -1,
+        };
+
+        return emptyOSInfo;
     }
 }

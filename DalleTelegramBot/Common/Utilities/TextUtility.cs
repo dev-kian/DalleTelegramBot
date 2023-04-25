@@ -88,6 +88,7 @@ namespace DalleTelegramBot.Common.Utilities
             builder.AppendLine($"_Platform_: *{osInfo.Platform}*");
             builder.AppendLine($"_Total Memory(OS)_: {osInfo.TotalMemorySize}");
             builder.AppendLine($"_Used Memory(OS)_: {osInfo.UsedMemorySize}");
+            builder.AppendLine($"_Free Memory(OS)_: {osInfo.FreeMemorySize}");
             return builder.ToString();
         }
     }

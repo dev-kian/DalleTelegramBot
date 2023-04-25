@@ -92,10 +92,15 @@ namespace DalleTelegramBot.Services.Telegram.Handlers
 
                 if(commandInfo is null)
                 {
-                    var message = _settings.AdminId == userId ? TextUtility.NotExistsCommandAdminMessage : TextUtility.NotExistsCommandMessage;
-                    
-                    await _telegramService.SendMessageAsync(userId, message, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
-                    
+                    if(_settings.AdminId == userId)
+                    {
+                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandAdminMessage, InlineUtility.StartCommandReplyKeyboard, cancellationToken);
+                    }
+                    else
+                    {
+                        await _telegramService.SendMessageAsync(userId, TextUtility.NotExistsCommandMessage, cancellationToken);
+                    }
+
                     return;
                 }
 
