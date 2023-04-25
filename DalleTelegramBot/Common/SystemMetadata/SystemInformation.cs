@@ -1,4 +1,5 @@
-﻿using DalleTelegramBot.Common.SystemMetadata.SharedData;
+﻿using DalleTelegramBot.Common.SystemMetadata.Base;
+using DalleTelegramBot.Common.SystemMetadata.SharedData;
 using System.Runtime.InteropServices;
 using static System.Runtime.InteropServices.RuntimeInformation;
 
@@ -7,7 +8,7 @@ namespace DalleTelegramBot.Common.SystemMetadata;
 
 internal class SystemInformation
 {
-    public static async Task<OSInfo> GetOSInfo()
+    public static async Task<OSDetails> GetOSInfo()
     {
         if(IsOSPlatform(OSPlatform.Windows))
         {
@@ -21,15 +22,15 @@ internal class SystemInformation
         return CreateEmptyOSInfo();
     }
 
-    private static async Task<OSInfo> GetOSInfo<TOS>() where TOS : IOSInfo
+    private static async Task<OSDetails> GetOSInfo<TOS>() where TOS : IOSInfo
     {
-        var instance = Activator.CreateInstance(typeof(TOS), args: new[] { CreateEmptyOSInfo() });
-        return await (instance as IOSInfo)!.GetOSInfo();
+        var instance = Activator.CreateInstance(typeof(TOS), CreateEmptyOSInfo());
+        return await (instance as IOSInfo)!.GetOSDetails();
     }
 
-    private static OSInfo CreateEmptyOSInfo()
+    private static OSDetails CreateEmptyOSInfo()
     {
-        var emptyOSInfo = new OSInfo()
+        var emptyOSInfo = new OSDetails()
         {
             Platform = "Unknown",
             TotalMemorySize = -1,

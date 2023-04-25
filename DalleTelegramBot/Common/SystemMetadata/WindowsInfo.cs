@@ -1,83 +1,50 @@
-﻿using DalleTelegramBot.Common.SystemMetadata.SharedData;
+﻿using DalleTelegramBot.Common.SystemMetadata.Base;
+using DalleTelegramBot.Common.SystemMetadata.SharedData;
+using Microsoft.Win32;
 using Serilog;
-using System.Diagnostics;
+using System.Management;
 using System.Text.RegularExpressions;
 
 namespace DalleTelegramBot.Common.SystemMetadata;
 
-internal class WindowsInfo : IOSInfo
+internal class WindowsInfo : BaseOSInfo
 {
-    public async Task<OSInfo> GetOSInfo()
-    {
-        return new()
-        {
-            Platform = "Windows"
-        };
-    }
+    public WindowsInfo(OSDetails oSDetails) : base(oSDetails) { }
 
-    
-}
-
-internal class UnixInfo : IOSInfo
-{
-    private readonly OSInfo _oSInfo;
-    public UnixInfo()//todo: get from ctor and set in activator.instance
-    {
-        _oSInfo = new();
-    }
-    public async Task<OSInfo> GetOSInfo()
+    public override async Task<OSDetails> GetOSDetails()
     {
         try
         {
-            await InitializeAsync();
+            InitPlatform();
+            InitMemoryOS();
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Throw EX in {nameof(GetOSInfo)}.");
+            Log.Error(ex, $"Throw EX in {nameof(GetOSDetails)}.");
         }
 
-        return _oSInfo;
+        return _oSDetails;
+    }
+    private void InitPlatform()
+    {
+        var versionName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "Unknown")?.ToString();
+        var architecture = Environment.Is64BitOperatingSystem ? "x64" : "x86";
+        _oSDetails.Platform = $"{versionName} {architecture}";
     }
 
-    private async Task InitializeAsync()
+    private void InitMemoryOS()
     {
-        var platform = await ExecuteCommandAsync("uname");
-        _oSInfo.Platform = platform;
-        await InitMemoryOSAsync();
-    }
+#pragma warning disable CA1416 // Validate platform compatibility
+        var query = new ObjectQuery("SELECT TotalVisibleMemorySize, FreePhysicalMemory FROM Win32_OperatingSystem");
+        var searcher = new ManagementObjectSearcher(query);
+        var result = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
 
-    private async Task InitMemoryOSAsync()
-    {
-        var resultCommand = await ExecuteCommandAsync("free", "-k");
-        Regex regex = new Regex(@"^Mem:\s+(\d+)\s+(\d+)", RegexOptions.Multiline);
-
-        Match match = regex.Match(resultCommand);
-
-        if (!match.Success)
-            return;
-
-        double totalMemory = Math.Round(Convert.ToDouble(match.Groups[1].Value), 2);
-        double usedMemory = Math.Round(Convert.ToDouble(match.Groups[2].Value), 2);
-        double freeMemory = Math.Round(totalMemory - usedMemory, 2);
-        _oSInfo.TotalMemorySize = totalMemory;
-        _oSInfo.UsedMemorySize = usedMemory;
-        _oSInfo.FreeMemorySize = freeMemory;
-    }
-
-    private async Task<string> ExecuteCommandAsync(string command, string args = null!, CancellationToken cancellationToken = default)
-    {
-        var processInfo = new ProcessStartInfo(command, args)
-        {
-            UseShellExecute = false,
-            RedirectStandardOutput = true
-        };
-
-        using var process = Process.Start(processInfo);
-
-        var output = await process.StandardOutput.ReadToEndAsync();
-
-        await process.WaitForExitAsync(cancellationToken);
-
-        return output;
+        var totalMemory = Convert.ToDecimal(result["TotalVisibleMemorySize"]);
+        var freeMemory = Convert.ToDecimal(result["FreePhysicalMemory"]);
+        var usedMemory = totalMemory - freeMemory;
+        _oSDetails.TotalMemorySize = Math.Round(ToGB(totalMemory), 2);
+        _oSDetails.UsedMemorySize = Math.Round(ToGB(usedMemory), 2);
+        _oSDetails.FreeMemorySize = Math.Round(ToGB(freeMemory), 2);
+#pragma warning restore CA1416 // Validate platform compatibility
     }
 }
