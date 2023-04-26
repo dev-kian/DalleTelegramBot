@@ -20,7 +20,7 @@ internal class WindowsInfo : BaseOSInfo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Throw EX in {nameof(GetOSDetails)}.");
+            Log.Error(ex, $"Error occurred while trying to get OS details.");
         }
 
         return _oSDetails;

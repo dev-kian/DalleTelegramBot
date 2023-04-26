@@ -92,6 +92,7 @@ namespace DalleTelegramBot.Common.Utilities
             builder.AppendLine($"_Total Memory(OS)_: {osInfo.TotalMemorySize}");
             builder.AppendLine($"_Used Memory(OS)_: {osInfo.UsedMemorySize}");
             builder.AppendLine($"_Free Memory(OS)_: {osInfo.FreeMemorySize}");
+            builder.AppendLine($"_App Memory Usage_: {osInfo.AppMemoryUsageSize}");
             return builder.ToString();
         }
     }

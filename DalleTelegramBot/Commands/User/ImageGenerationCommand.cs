@@ -1,5 +1,4 @@
 ﻿using DalleTelegramBot.Commands.Base;
-using DalleTelegramBot.Common;
 using DalleTelegramBot.Common.Attributes;
 using DalleTelegramBot.Common.Caching;
 using DalleTelegramBot.Common.Enums;
