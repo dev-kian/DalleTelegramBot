@@ -9,7 +9,7 @@ internal abstract class BaseOSInfo : IOSInfo
     public BaseOSInfo(OSDetails oSDetails)
     {
         _oSDetails = oSDetails;
-        InitAppMemoryUsed();
+        InitAppMemoryUsage();
     }
 
     public abstract Task<OSDetails> GetOSDetails();
@@ -17,7 +17,7 @@ internal abstract class BaseOSInfo : IOSInfo
     protected decimal ToGB(decimal input)
         => input / (1024 * 1024);
 
-    private void InitAppMemoryUsed()
+    private void InitAppMemoryUsage()
     {
         var memoryUsed = Math.Round(ToGB(Process.GetCurrentProcess().PrivateMemorySize64), 2);
         _oSDetails.AppMemoryUsageSize = memoryUsed;
