@@ -36,8 +36,8 @@ namespace DalleTelegramBot.Commands.User
         {
             long userId = message.UserId();
 
-            try
-            {
+            //try
+            //{
                 var user = await _userRepository.GetByIdAsync(userId);
 
                 var apiKey = user.ApiKey;
@@ -131,12 +131,12 @@ namespace DalleTelegramBot.Commands.User
 
                 await _telegramService.SendMessageAsync(userId, TextUtility.ImgGenerationSendPromptMessage,
                     replyMarkup: new ReplyKeyboardMarkup(new KeyboardButton("❌Cancel")) { ResizeKeyboard = true, OneTimeKeyboard = true }, cancellationToken);
-            }
-            catch (Exception)
-            {
-                _stateCache.RemoveLastCommand(userId);
-                throw;
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    _stateCache.RemoveLastCommand(userId);
+            //    throw;
+            //}
         }
     }
 }

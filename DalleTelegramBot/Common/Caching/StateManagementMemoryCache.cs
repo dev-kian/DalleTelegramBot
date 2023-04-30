@@ -1,6 +1,5 @@
 ﻿using DalleTelegramBot.Common.Caching.SharedData;
 using Microsoft.Extensions.Caching.Memory;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DalleTelegramBot.Common.Caching
 {
