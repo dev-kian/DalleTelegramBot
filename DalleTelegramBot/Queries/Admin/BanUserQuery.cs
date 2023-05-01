@@ -5,46 +5,40 @@ using DalleTelegramBot.Common.Utilities;
 using DalleTelegramBot.Data.Contracts;
 using DalleTelegramBot.Queries.Base;
 using DalleTelegramBot.Services.Telegram;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace DalleTelegramBot.Queries.Admin
+namespace DalleTelegramBot.Queries.Admin;
+
+[Query("ban-user")]
+internal class BanUserQuery : BaseQuery, IScopedDependency
 {
-    [Query("ban-user")]
-    internal class BanUserQuery : BaseQuery, IScopedDependency
+    private readonly IUserRepository _userRepository;
+
+    public BanUserQuery(ITelegramService telegramService, IUserRepository userRepository) : base(telegramService)
     {
-        private readonly IUserRepository _userRepository;
+        _userRepository = userRepository;
+    }
 
-        public BanUserQuery(ITelegramService telegramService, IUserRepository userRepository) : base(telegramService)
-        {
-            _userRepository = userRepository;
-        }
+    public override async Task ExecuteAsync(CallbackQuery callbackQuery, CancellationToken cancellationToken)
+    {
+        var args = callbackQuery.Data!.GetArgs();
+        
+        long userId = long.Parse(args[0]);
+        
+        bool hasBackButton = args.Length == 2 && args[1]=="x";
 
-        public override async Task ExecuteAsync(CallbackQuery callbackQuery, CancellationToken cancellationToken)
-        {
-            var args = callbackQuery.Data!.GetArgs();
-            
-            long userId = long.Parse(args[0]);
-            
-            bool hasBackButton = args.Length == 2 && args[1]=="x";
+        var user = await _userRepository.GetByIdAsync(userId);
 
-            var user = await _userRepository.GetByIdAsync(userId);
+        if (user is null)
+            return;
 
-            if (user is null)
-                return;
+        user.IsBan = !user.IsBan;
 
-            user.IsBan = !user.IsBan;
+        await _userRepository.UpdateBanStateAsync(userId, user.IsBan);
 
-            await _userRepository.UpdateBanStateAsync(userId, user.IsBan);
-
-            await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId,
-                TextUtility.UserInfo(user.Id, user.IsBan, user.CreateTime),
-                InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton), ParseMode.Html, cancellationToken);
-        }
+        await _telegramService.EditMessageAsync(callbackQuery.UserId(), callbackQuery.Message!.MessageId,
+            TextUtility.UserInfo(user.Id, user.IsBan, user.CreateTime),
+            InlineUtility.AdminSettingsBanUserInlineKeyboard(user.Id, user.IsBan, hasBackButton), ParseMode.Html, cancellationToken);
     }
 }

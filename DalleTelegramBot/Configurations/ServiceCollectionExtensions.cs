@@ -52,7 +52,8 @@ namespace DalleTelegramBot.Configurations
 
         public static void AddOpenAIClient(this IServiceCollection services, OpenAISettings settings)
         {
-            services.AddHttpClient("openai_client").AddTypedClient<IOpenAIClient>(c =>
+            services.AddHttpClient("openai_client")
+                .AddTypedClient<IOpenAIClient>(c =>
             {
                 return new OpenAIClient(settings, c);
             });
