@@ -64,7 +64,7 @@ namespace DalleTelegramBot.Data.Repositories
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 const string Sql = "SELECT COUNT(*) FROM Users";
-                return connection.QuerySingle<int>(Sql);
+                return await connection.QuerySingleAsync<int>(Sql);
             }
         }
 
@@ -73,7 +73,7 @@ namespace DalleTelegramBot.Data.Repositories
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 const string Sql = "SELECT COUNT(*) FROM Users WHERE IsBan = @IsBan";
-                return connection.QuerySingle<int>(Sql, new {IsBan = isBan});
+                return await connection.QuerySingleAsync<int>(Sql, new {IsBan = isBan});
             }
         }
 
