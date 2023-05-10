@@ -38,7 +38,7 @@ namespace DalleTelegramBot.Common.Caching
             {
                 userMessageInfo.MessageCount += msgCount;
                 userMessageInfo.LastMessageTime = DateTime.UtcNow;
-                _cache.Set(userId, userMessageInfo, DateTimeOffset.UtcNow.AddDays(1));
+                //_cache.Set(userId, userMessageInfo, DateTimeOffset.UtcNow.AddDays(1));
             }
             else
             {
