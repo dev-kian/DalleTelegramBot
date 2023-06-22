@@ -1,14 +1,13 @@
 ﻿using DalleTelegramBot.Common.Caching.SharedData;
 using DalleTelegramBot.Configurations;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 
 namespace DalleTelegramBot.Common.Caching
 {
     internal class RateLimitingMemoryCache
     {
         private readonly IMemoryCache _cache;
-        public RateLimitingMemoryCache(IMemoryCache cache, IOptionsMonitor<AppSettings> options)
+        public RateLimitingMemoryCache(IMemoryCache cache)
         {
             _cache = cache;
         }
